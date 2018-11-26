@@ -2,7 +2,7 @@
 #------------------------------------------------------------------
 # EOJX1: Class Group Name
 # ---------------------------------------------------------------- */
-GROUP = {
+EOJX_GROUP = {
 	0x00: 'Sensor-related device class group',
 	0x01: 'Air conditioner-related device class group',
 	0x02: 'Housing/facility-related device class group',
@@ -17,7 +17,7 @@ GROUP = {
 # ------------------------------------------------------------------
 # EOJX2: Class Name
 # ---------------------------------------------------------------- */
-CLASS = {
+EOJX_CLASS = {
 	0x00: { # Sensor-related device class group
 		0x01: 'Gas leak sensor class',
 		0x02: 'Crime prevention sensor class',

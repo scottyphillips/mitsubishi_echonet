@@ -39,7 +39,7 @@ FAN_SPEED = {
 	'Max':			0x38
 }
 
-CODES = {
+ESV_CODES = {
 	0x60: {'name': 'GetC', 'description': 'Property value write request (no response required)'},
 	0x61: {'name': 'SetC', 'description': 'Property value write request (response required)'},
 	0x62: {'name': 'Get', 'description': 'Property value read request'},

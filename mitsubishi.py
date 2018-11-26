@@ -1,7 +1,10 @@
 import socket
 import struct
 import sys
-from mitsubishi_echonet import eojx, epc, esv
+from .eojx import *
+from .epc  import *
+from .esv  import *
+from .functions  import Function as F
 
 ENL_PORT = 3610
 ENL_MULTICAST_ADDRESS = "224.0.23.0"
@@ -36,19 +39,19 @@ def BuildEchonetMsg(data):
       message = (message << 24) + 0x05FF01
 
       # validate DEOJ
-      if data['DEOJGC'] in eojx.GROUP:
+      if data['DEOJGC'] in EOJX_GROUP:
           message = (message << 8) + data['DEOJGC']
       else:
           raise ValueError('Value ' + str(hex(data['DEOJGC'])) + ' not a valid SEO Group code')
 
-      if data['DEOJCC'] in eojx.CLASS[data['DEOJGC']]:
+      if data['DEOJCC'] in EOJX_CLASS[data['DEOJGC']]:
           message = (message << 8) + data['DEOJCC']
       else:
           raise ValueError('Value ' + str(hex(data['DEOJCC'])) + ' not a valid SEO class code')
       message = (message << 8) + data['DEOJIC']
 
       # validate esv - it can be either the HEX code
-      if data['ESV'] in esv.CODES:
+      if data['ESV'] in ESV_CODES:
           # ESV code is a string
           message = (message << 8) + data['ESV']
       else:
@@ -76,10 +79,10 @@ def DecodeEchonetMsg(byte):
   data = {}
   try:
       data['EHD1'] = byte[0]
-      if data['EHD1'] not in epc.EHD1:
+      if data['EHD1'] not in EHD1:
           raise ValueError('EHD1 Header invalid')
       data['EHD2'] = byte[1]
-      if data['EHD2'] not in epc.EHD2:
+      if data['EHD2'] not in EHD2:
           raise ValueError('EHD2 Header invalid')
       data['TID'] = int.from_bytes(byte[2:4], byteorder='big')
 
@@ -176,10 +179,10 @@ def Discover():
         rx['OPC'][0]['EPC'] == 0xd6):
             print('ECHONET lite node discovered at {}'.format(node['server'][0]))
             # Action EDT payload by calling applicable function using lookup table
-            edt = epc.CODE[rx['SEOJGC']][rx['SEOJCC']][rx['OPC'][0]['EPC']][1](rx['OPC'][0]['EDT'])
+            edt = EPC_CODE[rx['SEOJGC']][rx['SEOJCC']][rx['OPC'][0]['EPC']][1](rx['OPC'][0]['EDT'])
 
             # Hard coding to ensure
-            e = eval(epc.CODE[edt['eojgc']][edt['eojcc']]['class'])(node['server'][0], edt['eojci'])
+            e = eval(EPC_CODE[edt['eojgc']][edt['eojcc']]['class'])(node['server'][0], edt['eojci'])
 
             eoa.append(e)
 
@@ -203,7 +206,7 @@ class EchoNetNode:
         'DEOJGC': self.self_eojgc ,
         'DEOJCC': self.self_eojcc ,
         'DEOJIC': self.instance,
-        'ESV' : esv.GET,
+        'ESV' : GET,
         'OPC' : [{'EPC': tx_epc, 'PDC': 0x00}]
         }
         message = BuildEchonetMsg(tx_payload)
@@ -212,7 +215,7 @@ class EchoNetNode:
         rx = DecodeEchonetMsg(data[0]['payload'])
         rx_edt = rx['OPC'][0]['EDT']
         rx_epc = rx['OPC'][0]['EPC']
-        value = epc.CODE[self.self_eojgc][self.self_eojcc]['functions'][rx_epc][1](rx_edt)
+        value = EPC_CODE[self.self_eojgc][self.self_eojcc]['functions'][rx_epc][1](rx_edt)
         return value
 
     def SetMessage(self, tx_epc, tx_edt):
@@ -222,7 +225,7 @@ class EchoNetNode:
         'DEOJGC': self.self_eojgc ,
         'DEOJCC': self.self_eojcc ,
         'DEOJIC': self.instance,
-        'ESV' : esv.SETC,
+        'ESV' : SETC,
         'OPC' : [{'EPC': tx_epc, 'PDC': 0x01, 'EDT': tx_edt}]
         }
         message = BuildEchonetMsg(tx_payload)
@@ -266,7 +269,7 @@ class HomeAirConditioner(EchoNetNode):
         EchoNetNode.__init__(self, instance, netif)
         self.self_eojgc = 0x01
         self.self_eojcc = 0x30
-        self.available_functions = epc.CODE[self.self_eojgc][self.self_eojcc]['functions']
+        self.available_functions = EPC_CODE[self.self_eojgc][self.self_eojcc]['functions']
         self.setTemperature = None
         self.roomTemperature = None
         self.mode = False
@@ -280,7 +283,7 @@ class HomeAirConditioner(EchoNetNode):
         'DEOJGC': self.self_eojgc ,
         'DEOJCC': self.self_eojcc ,
         'DEOJIC': self.instance,
-        'ESV' : esv.GET,
+        'ESV' : GET,
         'OPC' : [{'EPC':0x80},{'EPC': 0xB3},{'EPC': 0xA0},{'EPC': 0xBB},{'EPC': 0xB0}]
         }
 
@@ -294,7 +297,7 @@ class HomeAirConditioner(EchoNetNode):
         for data in rx['OPC']:
             rx_edt = data['EDT']
             rx_epc = data['EPC']
-            value = epc.CODE[self.self_eojgc][self.self_eojcc]['functions'][rx_epc][1](rx_edt)
+            value = EPC_CODE[self.self_eojgc][self.self_eojcc]['functions'][rx_epc][1](rx_edt)
             self.JSON.update(value)
 
 
@@ -308,7 +311,7 @@ class HomeAirConditioner(EchoNetNode):
 
 
     def GetOperationlTemperature(self):
-        self.setTemperature = self.GetMessage(0xB3)['temperature']
+        self.setTemperature = self.GetMessage(0xB3)['set_temperature']
         # print("Current configured unit temperature is " + str(self.setTemperature) + " Degrees")
 
     def SetOperationlTemperature(self, temperature):
@@ -324,7 +327,7 @@ class HomeAirConditioner(EchoNetNode):
 
     def SetMode(self, mode):
         print("Set the current operating mode")
-        if self.SetMessage(0xB0, esv.MODES[mode]):
+        if self.SetMessage(0xB0, MODES[mode]):
             print("Mode set sucessfully")
         self.GetMode()
 
@@ -335,6 +338,6 @@ class HomeAirConditioner(EchoNetNode):
 
     def SetFanSpeed(self, fan_speed):
         print("Set the current fan speed")
-        if self.SetMessage(0xA0, esv.FAN_SPEED[fan_speed]):
+        if self.SetMessage(0xA0, FAN_SPEED[fan_speed]):
             print("Fan Speed set sucessfully")
         self.GetFanSpeed()

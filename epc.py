@@ -1,4 +1,4 @@
-from mitsubishi_echonet import functions as f
+from .functions import Function as f
 # ------------------------------------------------------------------
 # EHD1: ECHONET Lite Header 1
 # ---------------------------------------------------------------- */
@@ -19,7 +19,7 @@ EHD2 = {
 # EPC set
 # ---------------------------------------------------------------- */
 
-CODE = {
+EPC_CODE = {
 	0x00: { # Sensor-related device class group
 		0x01: { # Gas leak sensor class
 			0x80: 'Operation status',
@@ -271,7 +271,7 @@ CODE = {
 			"functions": {
 				0x80: ('Operation status', f._013080),
 				0x8F: 'Operation power-saving',
-				0xB0: ('Operation mode setting',f._0130B0),
+				0xB0: ('Operation mode setting', f._0130B0 ),
 				0xB1: 'Automatic temperature control setting',
 				0xB2: 'Normal/high-speed/silent operation setting',
 				0xB3: ('Set temperature value', f._0130B3),
@@ -282,17 +282,17 @@ CODE = {
 				0xB8: 'Rated power consumption',
 				0xB9: 'Measured value of current consumption',
 				0xBA: 'Measured value of room relative humidity',
-				0xBB: ('Measured value of room temperature',f._0130BB),
+				0xBB: ('Measured value of room temperature', f._0130BB),
 				0xBC: 'Set temperature value of user remote control',
 				0xBD: 'Measured cooled air temperature',
 				0xBE: 'Measured outdoor air temperature',
 				0xBF: 'Relative temperature setting',
-				0xA0: ('Air flow rate setting',f._0130A0),
+				0xA0: ('Air flow rate setting', f._0130A0),
 				0xA1: 'Automatic control of air flow direction setting',
 				0xA3: 'Automatic swing of air flow setting',
 				0xA4: 'Air flow direction (vertical) setting',
 				0xA5: 'Air flow direction (horizontal) setting',
-				0xAA: ('Special state',f._0130AA),
+				0xAA: ('Special state', f._0130AA),
 				0xAB: 'Non-priority state',
 				0xC0: 'Ventilation function setting',
 				0xC1: 'Humidifier function setting',
