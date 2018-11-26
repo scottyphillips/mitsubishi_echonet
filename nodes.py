@@ -4,13 +4,13 @@ import random, time
 
 class EchoNetNode:
     """Class for Echonet Objects"""
-    def __init__(self, message, netif="", polling = 10 ):
+    def __init__(self, instance = 0x1, netif="", polling = 10 ):
         Thread.__init__(self)
         self.netif = netif
-        self.last_transaction_id = 0
+        self.last_transaction_id = 0x1
         self.self_eojgc = None
         self.self_eojcc = None
-        self.instance = None
+        self.instance = instance
         self.available_functions = None
         self.status = False
 
@@ -80,12 +80,10 @@ class EchoNetNode:
 
 class HomeAirConditioner(EchoNetNode):
     """Class for Home AirConditioner Objects"""
-    def __init__(self, message, netif):
-        EchoNetNode.__init__(self, message, netif)
+    def __init__(self, netif, instance = 0x1):
+        EchoNetNode.__init__(self, instance, netif)
         self.self_eojgc = 0x01
         self.self_eojcc = 0x30
-        self.instance = message['instance']
-        self.last_transaction_id = message['TID']
         self.available_functions = epc.CODE[self.self_eojgc][self.self_eojcc]['functions']
         self.setTemperature = None
         self.roomTemperature = None

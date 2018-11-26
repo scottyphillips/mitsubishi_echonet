@@ -177,10 +177,9 @@ def Discover():
             print('ECHONET lite node discovered at {}'.format(node['server'][0]))
             # Action EDT payload by calling applicable function using lookup table
             edt = epc.CODE[rx['SEOJGC']][rx['SEOJCC']][rx['OPC'][0]['EPC']][1](rx['OPC'][0]['EDT'])
-            rx['instance'] = edt['eojci']
-            # Hard coding to ensure
 
-            e = epc.CODE[edt['eojgc']][edt['eojcc']]['class'](rx, node['server'][0])
+            # Hard coding to ensure
+            e = epc.CODE[edt['eojgc']][edt['eojcc']]['class'](node['server'][0], edt['eojci'])
 
             eoa.append(e)
 
