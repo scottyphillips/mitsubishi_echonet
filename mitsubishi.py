@@ -69,7 +69,7 @@ def BuildEchonetMsg(data):
                 message =  (message << 8 * values['PDC']) + values['EDT']
         else:
             message =  (message << 8) + 0x00
-      return format(message, 'x')
+      return format(int(message), 'x')
 # some error handling here.
   except ValueError as error:
         print('Caught this error: ' + repr(error))
@@ -229,8 +229,11 @@ class EchoNetNode:
         'OPC' : [{'EPC': tx_epc, 'PDC': 0x01, 'EDT': tx_edt}]
         }
         message = BuildEchonetMsg(tx_payload)
+        # print(message)
         data = SendMessage(message, self.netif);
+        # print(data)
         rx = DecodeEchonetMsg(data[0]['payload'])
+
         rx_epc = rx['OPC'][0]['EPC']
         rx_pdc = rx['OPC'][0]['PDC']
         if rx_epc == tx_epc and rx_pdc == 0x00:
@@ -316,9 +319,9 @@ class HomeAirConditioner(EchoNetNode):
 
     def SetOperationalTemperature(self, temperature):
         print("Setting the configured temperature to " + str(temperature))
-        if self.SetMessage(0xB3, temperature):
+        if self.SetMessage(0xB3, int(temperature)):
             print("Temperature set sucessfully")
-        self.GetOperationlTemperature()
+        self.GetOperationalTemperature()
 
     def GetMode(self):
         # print("Getting the current operating mode")
