@@ -1,4 +1,4 @@
-from mitsubishi_echonet  import mitsubishi, nodes as n, functions as f
+from mitsubishi_echonet import functions as f
 # ------------------------------------------------------------------
 # EHD1: ECHONET Lite Header 1
 # ---------------------------------------------------------------- */
@@ -267,7 +267,7 @@ CODE = {
 	},
 	0x01: { # Air conditioner-related device class group
 		0x30: { # Home air conditioner class
-			"class": n.HomeAirConditioner,
+			"class": 'HomeAirConditioner',
 			"functions": {
 				0x80: ('Operation status', f._013080),
 				0x8F: 'Operation power-saving',
