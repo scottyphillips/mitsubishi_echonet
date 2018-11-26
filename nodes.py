@@ -116,13 +116,14 @@ class HomeAirConditioner(EchoNetNode):
             rx_epc = data['EPC']
             value = epc.CODE[self.self_eojgc][self.self_eojcc]['functions'][rx_epc][1](rx_edt)
             self.JSON.update(value)
-            self.setTemperature = self.JSON['set_temperature']
-            self.mode = self.JSON['mode']
-            self.fan_speed = self.JSON['fan_speed']
-            self.roomTemperature = self.JSON['room_temperature']
-            self.status = self.JSON['status']
+
 
         print(self.JSON)
+        self.setTemperature = self.JSON['set_temperature']
+        self.mode = self.JSON['mode']
+        self.fan_speed = self.JSON['fan_speed']
+        self.roomTemperature = self.JSON['room_temperature']
+        self.status = self.JSON['status']
         return self.JSON
 
 
