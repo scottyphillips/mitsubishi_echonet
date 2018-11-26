@@ -310,11 +310,11 @@ class HomeAirConditioner(EchoNetNode):
         return self.JSON
 
 
-    def GetOperationlTemperature(self):
+    def GetOperationalTemperature(self):
         self.setTemperature = self.GetMessage(0xB3)['set_temperature']
         # print("Current configured unit temperature is " + str(self.setTemperature) + " Degrees")
 
-    def SetOperationlTemperature(self, temperature):
+    def SetOperationalTemperature(self, temperature):
         print("Setting the configured temperature to " + str(temperature))
         if self.SetMessage(0xB3, temperature):
             print("Temperature set sucessfully")
