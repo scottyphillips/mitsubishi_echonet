@@ -3,7 +3,7 @@ Mitsubishi platform to control HVAC using MAC-568IF-E Interface over Echonet
 Protocol
 
 Uses mitsubishi_echonet python Library for API calls.
-Plan is to upload library to PyPi
+Plan is to eventually upload library to PyPi
 """
 
 DOMAIN = "mitsubishi"
@@ -17,7 +17,7 @@ from homeassistant.components.climate import (
     SUPPORT_TARGET_TEMPERATURE_HIGH, SUPPORT_TARGET_TEMPERATURE_LOW,
     SUPPORT_ON_OFF)
 from homeassistant.const import TEMP_CELSIUS, TEMP_FAHRENHEIT, ATTR_TEMPERATURE
-from custom_components.mitsubishi_echonet import mitsubishi as mit #new line
+from custom_components.mitsubishi_echonet import lib.mitsubishi as mit #new line
 
 SUPPORT_FLAGS = SUPPORT_TARGET_HUMIDITY_LOW | SUPPORT_TARGET_HUMIDITY_HIGH
 
