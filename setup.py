@@ -9,7 +9,7 @@ setup(
     url='http://pypi.python.org/pypi/mitsubishi_echonet/',
     license='LICENSE.txt',
     description='A library for interfacing with Mitsubishi HVAC via the Echonet lite protocol.',
-    long_description=open('README.txt').read(),
+    long_description=open('README.md').read(),
     # install_requires=[
     #    "Django >= 1.1.1",
     #    "caldav == 0.1.4",
