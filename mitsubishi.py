@@ -1,8 +1,8 @@
 """
-Mitsubishi platform to control HVAC using MAC-568IF-E Interface over Echonet
-Protocol
+Mitsubishi platform module for Home Assistant to control HVAC using
+MAC-568IF-E Interface over Echonet Protocol
 
-Uses mitsubishi_echonet python Library for API calls.
+Uses mitsubishi_echonet python Library (specifically lib.mitsubihsi) for API calls.
 Plan is to eventually upload library to PyPi
 """
 
