@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
     name='mitsubishi_echonet',
-    version='0.1.0',
+    version='0.1.2',
     author='Scott Phillips',
     author_email='jrh@example.com',
     packages=['mitsubishi_echonet'],

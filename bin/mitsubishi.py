@@ -3,10 +3,17 @@ Mitsubishi platform to control HVAC using MAC-568IF-E Interface over Echonet
 Protocol
 
 Uses mitsubishi_echonet python Library for API calls.
-Plan is to upload library to PyPi
-"""
+The library should download automatically and it should download to config/deps
+but it didnt seem to work for ages so you may need to restart appliance a few times.
 
-DOMAIN = "mitsubishi"
+As a last resort if the automatic pip install doesnt work:
+1. Download the GIT repo
+2. Copy the 'misubishi-echonet' subfolder out of the repo and into 'custom_components
+3. Flip the comments on the following lines:
+from mitsubishi_echonet import lib_mitsubishi as mit
+# from custom_components.mitsubishi_echonet import lib_mitsubishi as mit
+
+"""
 
 from homeassistant.components.climate import (
     ClimateDevice, ATTR_TARGET_TEMP_HIGH, ATTR_TARGET_TEMP_LOW,
@@ -16,30 +23,44 @@ from homeassistant.components.climate import (
     SUPPORT_OPERATION_MODE, SUPPORT_AUX_HEAT, SUPPORT_SWING_MODE,
     SUPPORT_TARGET_TEMPERATURE_HIGH, SUPPORT_TARGET_TEMPERATURE_LOW,
     SUPPORT_ON_OFF)
-from homeassistant.const import TEMP_CELSIUS, TEMP_FAHRENHEIT, ATTR_TEMPERATURE, CONF_IP_ADDRESS, CONF_HOST
-from custom_components.mitsubishi_echonet import lib_mitsubishi as mit #new line
+from homeassistant.const import TEMP_CELSIUS, TEMP_FAHRENHEIT, ATTR_TEMPERATURE, CONF_HOST, CONF_IP_ADDRESS
 
+DOMAIN = "mitsubishi"
+REQUIREMENTS = ['mitsubishi_echonet==0.1.2']
 SUPPORT_FLAGS = SUPPORT_TARGET_HUMIDITY_LOW | SUPPORT_TARGET_HUMIDITY_HIGH
 
+from mitsubishi_echonet import lib_mitsubishi as mit
+# from custom_components.mitsubishi_echonet import lib_mitsubishi as mit
+
 def setup_platform(hass, config, add_entities, discovery_info=None):
-    """Set up the Demo climate devices."""
+    # from mitsubishi_echonet import lib_mitsubishi as mit
+    """
+    Set up the Mitsubishi climate devices.
+    Ideally, the library discovery mechanism will return what settings can be controlled
+    """
     add_entities([
         MitsubishiClimate('PEA_RP140', config.get(CONF_IP_ADDRESS), 21, TEMP_CELSIUS, None, None, 22, 'On High',
                      None, None, None, 'cool', None, None, None, None)
-   ])
+    ])
 
 
 class MitsubishiClimate(ClimateDevice):
-    """Representation of a demo climate device."""
+    """
+    The MitsubishiClimate platform is used to provide the interface
+    between the API library and the climate component.
+    A lot of functions are not working at present and there is a ton of
+    clean up to do """
+
 
     def __init__(self, name, ip_address, target_temperature, unit_of_measurement,
                  away, hold, current_temperature, current_fan_mode,
                  target_humidity, current_humidity, current_swing_mode,
                  current_operation, aux, target_temp_high, target_temp_low,
                  is_on):
-        """Initialize the climate device."""
+        # from mitsubishi_echonet import lib_mitsubishi as mit
+        """Initialize the Mitsubishi climate device."""
         self._name = name
-        self._api = mit.HomeAirConditioner('192.168.1.11') #new line
+        self._api = mit.HomeAirConditioner(ip_address) #new line
         data = self._api.Update()
         self._support_flags = SUPPORT_FLAGS
         if target_temperature is not None:
@@ -199,17 +220,17 @@ class MitsubishiClimate(ClimateDevice):
         self.schedule_update_ha_state()
 
     def set_humidity(self, humidity):
-        """Set new target temperature."""
+        """Set new target humidity."""
         self._target_humidity = humidity
         self.schedule_update_ha_state()
 
     def set_swing_mode(self, swing_mode):
-        """Set new target temperature."""
+        """Set swing mode"""
         self._current_swing_mode = swing_mode
         self.schedule_update_ha_state()
 
     def set_fan_mode(self, fan_mode):
-        """Set new target temperature."""
+        """Set fan mode"""
         self._api.SetFanSpeed(fan_mode)
         self._current_fan_mode = fan_mode
         self.schedule_update_ha_state()
