@@ -17,7 +17,7 @@ from homeassistant.components.climate import (
     SUPPORT_TARGET_TEMPERATURE_HIGH, SUPPORT_TARGET_TEMPERATURE_LOW,
     SUPPORT_ON_OFF)
 from homeassistant.const import TEMP_CELSIUS, TEMP_FAHRENHEIT, ATTR_TEMPERATURE
-from custom_components.mitsubishi_echonet import lib.mitsubishi as mit #new line
+from custom_components.mitsubishi_echonet import lib_mitsubishi as mit #new line
 
 SUPPORT_FLAGS = SUPPORT_TARGET_HUMIDITY_LOW | SUPPORT_TARGET_HUMIDITY_HIGH
 
