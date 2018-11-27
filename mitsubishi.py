@@ -1,9 +1,9 @@
 """
-Mitsubishi platform module for Home Assistant to control HVAC using
-MAC-568IF-E Interface over Echonet Protocol
+Mitsubishi platform to control HVAC using MAC-568IF-E Interface over Echonet
+Protocol
 
-Uses mitsubishi_echonet python Library (specifically lib.mitsubihsi) for API calls.
-Plan is to eventually upload library to PyPi
+Uses mitsubishi_echonet python Library for API calls.
+Plan is to upload library to PyPi
 """
 
 DOMAIN = "mitsubishi"
@@ -16,7 +16,7 @@ from homeassistant.components.climate import (
     SUPPORT_OPERATION_MODE, SUPPORT_AUX_HEAT, SUPPORT_SWING_MODE,
     SUPPORT_TARGET_TEMPERATURE_HIGH, SUPPORT_TARGET_TEMPERATURE_LOW,
     SUPPORT_ON_OFF)
-from homeassistant.const import TEMP_CELSIUS, TEMP_FAHRENHEIT, ATTR_TEMPERATURE
+from homeassistant.const import TEMP_CELSIUS, TEMP_FAHRENHEIT, ATTR_TEMPERATURE, CONF_IP_ADDRESS, CONF_HOST
 from custom_components.mitsubishi_echonet import lib_mitsubishi as mit #new line
 
 SUPPORT_FLAGS = SUPPORT_TARGET_HUMIDITY_LOW | SUPPORT_TARGET_HUMIDITY_HIGH
@@ -24,7 +24,7 @@ SUPPORT_FLAGS = SUPPORT_TARGET_HUMIDITY_LOW | SUPPORT_TARGET_HUMIDITY_HIGH
 def setup_platform(hass, config, add_entities, discovery_info=None):
     """Set up the Demo climate devices."""
     add_entities([
-        MitsubishiClimate('PEA_RP140', 21, TEMP_CELSIUS, None, None, 22, 'On High',
+        MitsubishiClimate('PEA_RP140', config.get(CONF_IP_ADDRESS), 21, TEMP_CELSIUS, None, None, 22, 'On High',
                      None, None, None, 'cool', None, None, None, None)
    ])
 
@@ -32,7 +32,7 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
 class MitsubishiClimate(ClimateDevice):
     """Representation of a demo climate device."""
 
-    def __init__(self, name, target_temperature, unit_of_measurement,
+    def __init__(self, name, ip_address, target_temperature, unit_of_measurement,
                  away, hold, current_temperature, current_fan_mode,
                  target_humidity, current_humidity, current_swing_mode,
                  current_operation, aux, target_temp_high, target_temp_low,
