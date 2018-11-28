@@ -23,13 +23,13 @@ ENL_MULTICAST_ADDRESS = "224.0.23.0"
 
 
 """
-BuildEchonetMsg is used to build an ECHONET-LITE control message in the form
+buildEchonetMsg is used to build an ECHONET-LITE control message in the form
 of a byte string
 
 param data: a dict representing the control message.
 return: an int representing the control message.
 """
-def BuildEchonetMsg(data):
+def buildEchonetMsg(data):
    try:
       # EHD is fixed to 0x1081 because I am lazy.
       message = 0x1081
@@ -86,13 +86,13 @@ def BuildEchonetMsg(data):
 
 
 """
-DecodeEchonetMsg is used to build an ECHONET-LITE control message in the form
+decodeEchonetMsg is used to build an ECHONET-LITE control message in the form
 of a byte string
 
 param bytes: A string representing the hexadecimal control message in ECHONET LITE
 return: a dict representing the deconstructed ECHONET packet
 """
-def DecodeEchonetMsg(byte):
+def decodeEchonetMsg(byte):
   data = {}
   try:
       data['EHD1'] = byte[0]
@@ -140,16 +140,16 @@ def DecodeEchonetMsg(byte):
   return data
 
 """
-SendMessage is used for ECHONET Unicast and Multicast transcations
+sendMessage is used for ECHONET Unicast and Multicast transcations
 message is assumed a correctly formatted ECHONET string
-SendMessage will receive multiple messages if multicast is used "eg 224.0.23.0"
+sendMessage will receive multiple messages if multicast is used "eg 224.0.23.0"
 
 param message: an int representing the ECHONET message
 param ip_address: a string representing the IPv4 address e.g "1.2.3.4"
 
 return: an array representing the received response from the ECHONET message
 """
-def SendMessage(message, ip_address):
+def sendMessage(message, ip_address):
     data =[]
     transaction_group = (ip_address, ENL_PORT)
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -179,12 +179,12 @@ def SendMessage(message, ip_address):
     return data
 
 """
-Discover is used to identify ECHONET nodes. Original plan was for this library
+discover is used to identify ECHONET nodes. Original plan was for this library
 to fully support a multitude of ECHONET devices.
 
 return: an array of discovered ECHONET node objects.
 """
-def Discover():
+def discover():
     eoa = []; # array containing echonet objects
     tx_payload = {
         'TID' : 0x01, # Transaction ID 1
@@ -195,13 +195,13 @@ def Discover():
         'OPC' : [{'EPC': 0xD6}]
     }
     # Build ECHONET discover messafge.
-    message = BuildEchonetMsg(tx_payload)
+    message = buildEchonetMsg(tx_payload)
 
     # Send message to multicast group and receive data
-    data = SendMessage(message, ENL_MULTICAST_ADDRESS);
+    data = sendMessage(message, ENL_MULTICAST_ADDRESS);
     # Decide received message for each node discovered:
     for node in data:
-        rx = DecodeEchonetMsg(node['payload'])
+        rx = decodeEchonetMsg(node['payload'])
         if (tx_payload['DEOJGC'] == rx['SEOJGC'] and
         rx['TID'] == tx_payload['TID'] and
         rx['OPC'][0]['EPC'] == 0xd6):
@@ -214,6 +214,37 @@ def Discover():
 
     return eoa
 
+"""
+getPropertyMaps is used to identify all available properties from a node.
+This can be used in conjunction with the discover method
+
+return: an dict containing the properties of the node.
+"""
+def getPropertyMaps(ip_address, deojgc, deojcc, deojci):
+        tx_payload = {
+            'TID' : 0x01, # Transaction ID 1
+            'DEOJGC': deojgc,
+            'DEOJCC': deojcc,
+            'DEOJIC': deojci,
+            'ESV' : GET,
+            'OPC' : [{'EPC': 0x9F}]
+        }
+        # Build ECHONET discover messafge.
+        message = buildEchonetMsg(tx_payload)
+        print(message)
+        data = sendMessage(message, ip_address);
+        print(data)
+        rx = decodeEchonetMsg(data[0]['payload'])
+        print(rx)
+
+        # Action EDT payload by calling applicable function using lookup table
+        edt = EPC_SUPER[rx['OPC'][0]['EPC']][1](rx['OPC'][0]['EDT'])
+        print(edt)
+        # edt = EPC_CODE[rx['SEOJGC']][rx['SEOJCC']][rx['OPC'][0]['EPC']][1](rx['OPC'][0]['EDT'])
+        # rx_edt = rx['OPC'][0]['EDT']
+        # rx_epc = rx['OPC'][0]['EPC']
+        # value = EPC_CODE[self.self_eojgc][self.self_eojcc]['functions'][rx_epc][1](rx_edt)
+        return edt
 
 """
 Superclass for Echonet node objects.
@@ -236,13 +267,13 @@ class EchoNetNode:
         self.status = False
 
     """
-    GetMessage is used to fire ECHONET request messages to get Node information
+    getMessage is used to fire ECHONET request messages to get Node information
     Assumes one OPC is sent per message.
 
     :param tx_epc: EPC byte code for the request.
     :return: the deconstructed payload for the response
     """
-    def GetMessage(self, tx_epc):
+    def getMessage(self, tx_epc):
         self.last_transaction_id += 1
         tx_payload = {
         'TID' : self.last_transaction_id,
@@ -252,10 +283,9 @@ class EchoNetNode:
         'ESV' : GET,
         'OPC' : [{'EPC': tx_epc, 'PDC': 0x00}]
         }
-        message = BuildEchonetMsg(tx_payload)
-
-        data = SendMessage(message, self.netif);
-        rx = DecodeEchonetMsg(data[0]['payload'])
+        message = buildEchonetMsg(tx_payload)
+        data = sendMessage(message, self.netif);
+        rx = decodeEchonetMsg(data[0]['payload'])
         rx_edt = rx['OPC'][0]['EDT']
         rx_epc = rx['OPC'][0]['EPC']
         value = EPC_CODE[self.self_eojgc][self.self_eojcc]['functions'][rx_epc][1](rx_edt)
@@ -263,14 +293,14 @@ class EchoNetNode:
 
 
     """
-    SetMessage is used to fire ECHONET request messages to set Node information
+    setMessage is used to fire ECHONET request messages to set Node information
     Assumes one OPC is sent per message.
 
     :param tx_epc: EPC byte code for the request.
     :param tx_edt: EDT data relevant to the request.
     :return: the deconstructed payload for the response
     """
-    def SetMessage(self, tx_epc, tx_edt):
+    def setMessage(self, tx_epc, tx_edt):
         self.last_transaction_id += 1
         tx_payload = {
         'TID' : self.last_transaction_id,
@@ -280,11 +310,11 @@ class EchoNetNode:
         'ESV' : SETC,
         'OPC' : [{'EPC': tx_epc, 'PDC': 0x01, 'EDT': tx_edt}]
         }
-        message = BuildEchonetMsg(tx_payload)
+        message = buildEchonetMsg(tx_payload)
         # print(message)
-        data = SendMessage(message, self.netif);
+        data = sendMessage(message, self.netif);
         # print(data)
-        rx = DecodeEchonetMsg(data[0]['payload'])
+        rx = decodeEchonetMsg(data[0]['payload'])
 
         rx_epc = rx['OPC'][0]['EPC']
         rx_pdc = rx['OPC'][0]['PDC']
@@ -295,13 +325,13 @@ class EchoNetNode:
             return False
 
     """
-    GetOperationalStatus returns the ON/OFF state of the node
+    getOperationalStatus returns the ON/OFF state of the node
 
     :return: status as a string.
     """
-    def GetOperationalStatus(self): # EPC 0x80
+    def getOperationalStatus(self): # EPC 0x80
         print("Checking Operational Status..")
-        self.status = self.GetMessage(0x80)['status']
+        self.status = self.getMessage(0x80)['status']
         if self.status == 'On':
             print("The node is switched ON")
         else:
@@ -314,25 +344,25 @@ class EchoNetNode:
 
     :param status: True if On, False if Off.
     """
-    def SetOperationalStatus(self, status): # EPC 0x80
+    def setOperationalStatus(self, status): # EPC 0x80
         print("Setting Operational Status..")
-        self.SetMessage(0x80, 0x30 if status else 0x31)
+        self.setMessage(0x80, 0x30 if status else 0x31)
 
     """
     On sets the node to ON.
 
     """
-    def On (self): # EPC 0x80
+    def on (self): # EPC 0x80
         print("Switching on..")
-        self.SetMessage(0x80, 0x30)
+        self.setMessage(0x80, 0x30)
 
     """
     On sets the node to OFF.
 
     """
-    def Off (self): # EPC 0x80
+    def off (self): # EPC 0x80
         print("Switching off..")
-        self.SetMessage(0x80, 0x31)
+        self.setMessage(0x80, 0x31)
 
 
 """Class for Home AirConditioner Objects"""
@@ -357,13 +387,13 @@ class HomeAirConditioner(EchoNetNode):
         self.JSON = {}
 
     """
-    Update is used as a quick and dirty way of producing a dict useful for API polling etc
+    update is used as a quick and dirty way of producing a dict useful for API polling etc
 
     return: A string with the following attributes:
     {'status': '###', 'set_temperature': ##, 'fan_speed': '###', 'room_temperature': ##, 'mode': '###'}
 
     """
-    def Update(self):
+    def update(self):
         self.last_transaction_id += 1
         tx_payload = {
         'TID' : self.last_transaction_id,
@@ -374,10 +404,10 @@ class HomeAirConditioner(EchoNetNode):
         'OPC' : [{'EPC':0x80},{'EPC': 0xB3},{'EPC': 0xA0},{'EPC': 0xBB},{'EPC': 0xB0}]
         }
 
-        message = BuildEchonetMsg(tx_payload)
-        data = SendMessage(message, self.netif);
+        message = buildEchonetMsg(tx_payload)
+        data = sendMessage(message, self.netif);
         try:
-            rx = DecodeEchonetMsg(data[0]['payload'])
+            rx = decodeEchonetMsg(data[0]['payload'])
         except IndexError as error:
             print('No Data Received')
             return self.JSON
@@ -401,60 +431,60 @@ class HomeAirConditioner(EchoNetNode):
 
     return: A string representing the configured temperature.
     """
-    def GetOperationalTemperature(self):
-        self.setTemperature = self.GetMessage(0xB3)['set_temperature']
+    def getOperationalTemperature(self):
+        self.setTemperature = self.getMessage(0xB3)['set_temperature']
         # print("Current configured unit temperature is " + str(self.setTemperature) + " Degrees")
         return self.setTemperature
 
 
     """
-    SetOperationaTemperature get the temperature that has been set in the HVAC
+    setOperationalTemperature get the temperature that has been set in the HVAC
 
     param temperature: A string representing the desired temperature.
     """
-    def SetOperationalTemperature(self, temperature):
+    def setOperationalTemperature(self, temperature):
         # print("Setting the configured temperature to " + str(temperature))
-        if self.SetMessage(0xB3, int(temperature)):
+        if self.setMessage(0xB3, int(temperature)):
             print("Temperature set sucessfully")
-            self.GetOperationalTemperature()
+            self.getOperationalTemperature()
 
     """
     GetMode returns the current configured mode (e.g Heating, Cooling, Fan etc)
 
     return: A string representing the configured mode.
     """
-    def GetMode(self):
-        self.mode = self.GetMessage(0xB0)['mode']
+    def getMode(self):
+        self.mode = self.getMessage(0xB0)['mode']
         print("Current configured mode is " + str(self.mode))
 
     """
-    SetMode set the desired mode (e.g Heating, Cooling, Fan etc)
+    setMode set the desired mode (e.g Heating, Cooling, Fan etc)
 
     param mode: A string representing the desired mode.
     """
-    def SetMode(self, mode):
+    def setMode(self, mode):
         print("Set the current operating mode")
-        if self.SetMessage(0xB0, MODES[mode]):
+        if self.setMessage(0xB0, MODES[mode]):
             print("Mode set sucessfully")
-        self.GetMode()
+        self.getMode()
 
     """
     GetFanSpeed gets the current fan speed (e.g Low, Medium, High etc)
 
     return: A string representing the fan speed
     """
-    def GetFanSpeed(self):
-        self.fan_speed = self.GetMessage(0xA0)['fan_speed']
+    def getFanSpeed(self):
+        self.fan_speed = self.getMessage(0xA0)['fan_speed']
         print("Fan speed is " + str(self.fan_speed))
 
 
     """
-    SetFanSpeed set the desired fan speed (e.g Low, Medium, High etc)
+    setFanSpeed set the desired fan speed (e.g Low, Medium, High etc)
 
     param fans_speed: A string representing the fan speed
     """
-    def SetFanSpeed(self, fan_speed):
+    def setFanSpeed(self, fan_speed):
         print("Set the current fan speed")
-        if self.SetMessage(0xA0, FAN_SPEED[fan_speed]):
+        if self.setMessage(0xA0, FAN_SPEED[fan_speed]):
             print("Fan Speed set sucessfully")
-        self.GetFanSpeed()
+        self.getFanSpeed()

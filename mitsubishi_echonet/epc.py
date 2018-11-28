@@ -1345,5 +1345,5 @@ EPC_SUPER = {
 	0x9C: 'GetM property map',
 	0x9D: 'Status change announcement property map',
 	0x9E: 'Set property map',
-	0x9F: 'Get property map'
+	0x9F: ('Get property map', f._FF009F)
 }

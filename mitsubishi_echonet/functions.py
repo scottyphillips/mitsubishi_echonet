@@ -88,3 +88,24 @@ class Function:
            0x40: 'Other'
         }
         return {'mode': values.get(op_mode, "Invalid setting" )}
+
+    def _FF009F(data):
+        #data = int.from_bytes(data, 'big')
+        # print(hex(data[0]))
+        for i in range (1, len(data)):
+            code = i-1
+            #print ("code " + str(hex(code)))
+            #print('{0:08b}'.format(data[i])[::-1])
+            binary = '{0:08b}'.format(data[i])[::-1]
+            for j in range (0, 8):
+                if binary[j] == "1":
+                    # print(j+8)
+                    EPC = (j+8) * 0x10 + code
+                    print('{0:02x}'.format(EPC))
+
+            #
+            # binary = '{0:08b}'.format(data[i])
+            #
+            # for j in range (1, 9):
+            #    print("a" + binary[j])
+        # return {"data":data}
