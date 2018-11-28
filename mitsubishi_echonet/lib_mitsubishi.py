@@ -215,36 +215,48 @@ def discover():
     return eoa
 
 """
-getPropertyMaps is used to identify all available properties from a node.
-This can be used in conjunction with the discover method
+opCode is used to return details from a node using the lookup table
 
 return: an dict containing the properties of the node.
 """
-def getPropertyMaps(ip_address, deojgc, deojcc, deojci):
+def getOpCode(ip_address, deojgc, deojcc, deojci, opc, tid=0x01):
         tx_payload = {
-            'TID' : 0x01, # Transaction ID 1
+            'TID' : tid, # Transaction ID 1
             'DEOJGC': deojgc,
             'DEOJCC': deojcc,
             'DEOJIC': deojci,
             'ESV' : GET,
-            'OPC' : [{'EPC': 0x9F}]
+            'OPC' : opc
         }
         # Build ECHONET discover messafge.
         message = buildEchonetMsg(tx_payload)
-        print(message)
-        data = sendMessage(message, ip_address);
-        print(data)
-        rx = decodeEchonetMsg(data[0]['payload'])
-        print(rx)
-
+        tx_data = sendMessage(message, ip_address);
+        rx = decodeEchonetMsg(tx_data[0]['payload'])
+        return_data = {}
         # Action EDT payload by calling applicable function using lookup table
-        edt = EPC_SUPER[rx['OPC'][0]['EPC']][1](rx['OPC'][0]['EDT'])
-        print(edt)
-        # edt = EPC_CODE[rx['SEOJGC']][rx['SEOJCC']][rx['OPC'][0]['EPC']][1](rx['OPC'][0]['EDT'])
-        # rx_edt = rx['OPC'][0]['EDT']
-        # rx_epc = rx['OPC'][0]['EPC']
-        # value = EPC_CODE[self.self_eojgc][self.self_eojcc]['functions'][rx_epc][1](rx_edt)
-        return edt
+        for value in rx['OPC']:
+            rx_edt = value['EDT']
+            rx_epc = value['EPC']
+            if rx_epc in EPC_CODE[deojgc][deojcc]['functions']:
+                edt = EPC_CODE[deojgc][deojcc]['functions'][rx_epc][1](rx_edt)
+            else:
+                edt = EPC_SUPER[rx_epc][1](rx_edt)
+            return_data.update(edt)
+        # print(edt)
+        return return_data
+
+def getAllPropertyMaps(ip_address, deojgc, deojcc, deojci):
+    property_map = getOpCode(ip_address, deojgc, deojcc, deojci, [{'EPC':0x9F},{'EPC':0x9E}])
+    # setProperties = getOpCode(ip_address, deojgc, deojcc, deojci, [{'EPC':0x9E}])
+    print(property_map)
+    for property in property_map:
+        for value in property_map[property]:
+            if value in EPC_CODE[0x01][0x30]['functions']:
+                print(property + " - " + str(value) + " " + EPC_CODE[0x01][0x30]['functions'][value][0])
+            elif value in EPC_SUPER:
+                print(property + " - " + str(value) + " " + EPC_SUPER[value][0])
+            else:
+                print("code not found: " + hex(value) )
 
 """
 Superclass for Echonet node objects.
@@ -268,28 +280,16 @@ class EchoNetNode:
 
     """
     getMessage is used to fire ECHONET request messages to get Node information
-    Assumes one OPC is sent per message.
+    Assumes one EPC is sent per message.
 
     :param tx_epc: EPC byte code for the request.
     :return: the deconstructed payload for the response
     """
-    def getMessage(self, tx_epc):
+    def getMessage(self, epc, pdc = 0x00):
         self.last_transaction_id += 1
-        tx_payload = {
-        'TID' : self.last_transaction_id,
-        'DEOJGC': self.self_eojgc ,
-        'DEOJCC': self.self_eojcc ,
-        'DEOJIC': self.instance,
-        'ESV' : GET,
-        'OPC' : [{'EPC': tx_epc, 'PDC': 0x00}]
-        }
-        message = buildEchonetMsg(tx_payload)
-        data = sendMessage(message, self.netif);
-        rx = decodeEchonetMsg(data[0]['payload'])
-        rx_edt = rx['OPC'][0]['EDT']
-        rx_epc = rx['OPC'][0]['EPC']
-        value = EPC_CODE[self.self_eojgc][self.self_eojcc]['functions'][rx_epc][1](rx_edt)
-        return value
+        opc = [{'EPC': epc, 'PDC': pdc}]
+        edt = getOpCode(self.netif, self.self_eojgc, self.self_eojcc, self.instance, opc, self.last_transaction_id )
+        return edt
 
 
     """
@@ -311,9 +311,7 @@ class EchoNetNode:
         'OPC' : [{'EPC': tx_epc, 'PDC': 0x01, 'EDT': tx_edt}]
         }
         message = buildEchonetMsg(tx_payload)
-        # print(message)
         data = sendMessage(message, self.netif);
-        # print(data)
         rx = decodeEchonetMsg(data[0]['payload'])
 
         rx_epc = rx['OPC'][0]['EPC']
@@ -395,29 +393,8 @@ class HomeAirConditioner(EchoNetNode):
     """
     def update(self):
         self.last_transaction_id += 1
-        tx_payload = {
-        'TID' : self.last_transaction_id,
-        'DEOJGC': self.self_eojgc ,
-        'DEOJCC': self.self_eojcc ,
-        'DEOJIC': self.instance,
-        'ESV' : GET,
-        'OPC' : [{'EPC':0x80},{'EPC': 0xB3},{'EPC': 0xA0},{'EPC': 0xBB},{'EPC': 0xB0}]
-        }
-
-        message = buildEchonetMsg(tx_payload)
-        data = sendMessage(message, self.netif);
-        try:
-            rx = decodeEchonetMsg(data[0]['payload'])
-        except IndexError as error:
-            print('No Data Received')
-            return self.JSON
-        for data in rx['OPC']:
-            rx_edt = data['EDT']
-            rx_epc = data['EPC']
-            value = EPC_CODE[self.self_eojgc][self.self_eojcc]['functions'][rx_epc][1](rx_edt)
-            self.JSON.update(value)
-
-
+        opc = [{'EPC':0x80},{'EPC': 0xB3},{'EPC': 0xA0},{'EPC': 0xBB},{'EPC': 0xB0}]
+        self.JSON = getOpCode(self.netif, self.self_eojgc, self.self_eojcc, self.instance, opc, self.last_transaction_id )
         print(self.JSON)
         self.setTemperature = self.JSON['set_temperature']
         self.mode = self.JSON['mode']
