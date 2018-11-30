@@ -1,20 +1,28 @@
 #!/usr/bin/env python3
-from mitsubishi_echonet import lib_mitsubishi as mit
+import mitsubishi_echonet as mit
 import time
 
+aircon = False
 # Discover HVAC Echonet objects
-aircon = mit.discover()[0]
+while aircon == False:
+    print("Discovering Air Conditioner..")
+    aircon = mit.discover()[0]
 
-mit.getPropertyMaps("192.168.1.11", 0x01, 0x30, 0x01)
+print (aircon.fetchSetProperties())
 # Returns dict of HVAC status
-# aircon.update()
+# aircon.off()
 # time.sleep(1)
 # Sets the fan speed
-# aircon.setFanSpeed('Medium-High')
+aircon.setFanSpeed('Medium-High')
+time.sleep(1)
+
+# aircon.getOperationalStatus()
 # time.sleep(1)
+
+
 # Sets the mode
 
-# aircon.setMode('Heating')
+aircon.setMode('Heating')
 # time.sleep(1)
 
 # Sets the temperature

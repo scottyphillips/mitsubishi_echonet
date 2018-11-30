@@ -15,9 +15,8 @@ from .eojx import *
 
 
 class Function:
-
-    def _0EF0D6(data):
-        data = int.from_bytes(data, 'big')
+    def _0EF0D6(edt):
+        data = int.from_bytes(edt, 'big')
         edtnum = int((data & 0xff000000) / 0x1000000)
         # number of instances suggest that multiple instances per packet..
         # this may need a bit of a rethink...
@@ -36,20 +35,20 @@ class Function:
           "eojci": eojci
         }
     # Check status of Air Conditioner
-    def _013080(data):
-        ops_value = int.from_bytes(data, 'little')
+    def _013080(edt):
+        ops_value = int.from_bytes(edt, 'little')
         return {'status': ('On' if ops_value == 0x30 else 'Off')}
 
     # Check status of Configured Temperature
-    def _0130B3(data):
-        return {'set_temperature': int.from_bytes(data, 'big')}
+    def _0130B3(edt):
+        return {'set_temperature': int.from_bytes(edt, 'big')}
 
     # Check status of Room Temperature
-    def _0130BB(data):
-        return {'room_temperature': int.from_bytes(data, 'big')}
+    def _0130BB(edt):
+        return {'room_temperature': int.from_bytes(edt, 'big')}
 
-    def _0130A0(data):
-        op_mode = int.from_bytes(data, 'big')
+    def _0130A0(edt):
+        op_mode = int.from_bytes(edt, 'big')
         values = {
            0x41: 'Automatic',
            0x31: 'Minimum',
@@ -64,8 +63,8 @@ class Function:
         return {'fan_speed': values.get(op_mode, "Invalid setting")}
 
 
-    def _0130AA(data):
-        op_mode = int.from_bytes(data, 'big')
+    def _0130AA(edt):
+        op_mode = int.from_bytes(edt, 'big')
         print(hex(op_mode))
         values = {
           0x40: 'Normal operation',
@@ -77,8 +76,8 @@ class Function:
         return {'special_setting': values.get(op_mode, "Invalid setting")}
 
     # Operation mode
-    def _0130B0(data):
-        op_mode = int.from_bytes(data, 'big')
+    def _0130B0(edt):
+        op_mode = int.from_bytes(edt, 'big')
         values = {
            0x41: 'Automatic',
            0x42: 'Cooling',
@@ -89,23 +88,25 @@ class Function:
         }
         return {'mode': values.get(op_mode, "Invalid setting" )}
 
-    def _FF009F(data):
-        #data = int.from_bytes(data, 'big')
-        # print(hex(data[0]))
-        for i in range (1, len(data)):
+    def _FF009E(edt):
+        setProperties = Function._FF009X(edt)
+        return {'setProperties': Function._FF009X(edt)}
+
+    def _FF009F(edt):
+        return {'getProperties': Function._FF009X(edt)}
+
+    def _FF009X(edt):
+        payload = []
+        if len(edt) < 17:
+            for i in range (1, len(edt)):
+                payload.append(edt[i])
+            return payload
+
+        for i in range (1, len(edt)):
             code = i-1
-            #print ("code " + str(hex(code)))
-            #print('{0:08b}'.format(data[i])[::-1])
-            binary = '{0:08b}'.format(data[i])[::-1]
+            binary = '{0:08b}'.format(edt[i])[::-1]
             for j in range (0, 8):
                 if binary[j] == "1":
-                    # print(j+8)
                     EPC = (j+8) * 0x10 + code
-                    print('{0:02x}'.format(EPC))
-
-            #
-            # binary = '{0:08b}'.format(data[i])
-            #
-            # for j in range (1, 9):
-            #    print("a" + binary[j])
-        # return {"data":data}
+                    payload.append(EPC)
+        return payload
