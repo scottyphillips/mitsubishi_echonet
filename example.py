@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from mitsubishi_echonet import lib_mitsubishi as mit
+import mitsubishi_echonet as mit
 import time
 
 aircon = False
@@ -13,8 +13,8 @@ print (aircon.fetchSetProperties())
 # aircon.off()
 # time.sleep(1)
 # Sets the fan speed
-# aircon.setFanSpeed('Medium-High')
-# time.sleep(1)
+aircon.setFanSpeed('Medium-High')
+time.sleep(1)
 
 # aircon.getOperationalStatus()
 # time.sleep(1)
@@ -22,7 +22,7 @@ print (aircon.fetchSetProperties())
 
 # Sets the mode
 
-# aircon.setMode('Heating')
+aircon.setMode('Heating')
 # time.sleep(1)
 
 # Sets the temperature
