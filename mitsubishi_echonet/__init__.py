@@ -182,7 +182,7 @@ to fully support a multitude of ECHONET devices.
 
 return: an array of discovered ECHONET node objects.
 """
-def discover():
+def discover(echonet_class = ""):
     eoa = []; # array containing echonet objects
     tx_payload = {
         'TID' : 0x01, # Transaction ID 1
@@ -197,18 +197,19 @@ def discover():
 
     # Send message to multicast group and receive data
     data = sendMessage(message, ENL_MULTICAST_ADDRESS);
-    # Decide received message for each node discovered:
+    # Decipher received message for each node discovered:
+
     for node in data:
         rx = decodeEchonetMsg(node['payload'])
         if (tx_payload['DEOJGC'] == rx['SEOJGC'] and
         rx['TID'] == tx_payload['TID'] and
         rx['OPC'][0]['EPC'] == 0xd6):
-            print('ECHONET lite node discovered at {}'.format(node['server'][0]))
-
             # Action EDT payload by calling applicable function using lookup table
             edt = EPC_CODE[rx['SEOJGC']][rx['SEOJCC']][rx['OPC'][0]['EPC']][1](rx['OPC'][0]['EDT'])
             e = eval(EPC_CODE[edt['eojgc']][edt['eojcc']]['class'])(node['server'][0], edt['eojci'])
-            eoa.append(e)
+            print('ECHONET lite node discovered at {} - {} class'.format(node['server'][0], EOJX_CLASS[edt['eojgc']][edt['eojcc']]))
+            if echonet_class == EOJX_CLASS[edt['eojgc']][edt['eojcc']] or echonet_class == "":
+                eoa.append(e)
 
     return eoa
 

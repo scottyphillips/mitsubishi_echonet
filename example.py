@@ -6,7 +6,7 @@ aircons = False
 # Discover HVAC Echonet objects
 while aircons == False:
     print("Discovering Air Conditioners..")
-    aircons = mit.discover()
+    aircons = mit.discover('Home air conditioner')
 
 for aircon in aircons:
    print("Airconditioner {} available properties:").format(aircon.netif)
