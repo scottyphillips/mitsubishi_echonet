@@ -1,11 +1,11 @@
-# mitsubishi_echonet
+# Mitsubishi Echonet
 
-A library for interfacing with Mitsubishi HVAC with the Echonet lite protocol
+A library for interfacing with Mitsubishi HVAC with the ECHONET-lite protocol
 over WiFi adaptors such as the MAC-568IF-E.
 
 It is specifically designed for use with Home Assistant, and its functionality
 is limited to HVAC systems, but it could be potentially extended for other
-Echonet lite applications and become a more general purpose library.
+ECHONET-lite applications and become a more general purpose library.
 
 Similar implementations seem to be Node JS middleware running on Docker
 containers to interface into the MQTT API however this is designed to be used
@@ -21,7 +21,51 @@ Simplest way to install is to use pip:
 ```
 pip install mitsubishi_echonet
 ```
-## Using the library
+
+## Basic usage
+### Discover a list of HVAC using:
+```
+aircons = mit.discover('Home air conditioner')
+```
+
+### Turn HVAC on or off:
+```
+aircon.on()
+aircon.off()
+aircon.status()
+{'status': 'Off'}
+```
+
+### Set or Get a HVACs target temperature
+```
+aircon.setOperationalTemperature(25)
+aircon.getOperationalTemperature()
+{'set_temperature': 25}
+```
+
+### Set or Get a HVACs mode of operation:
+```
+supported modes =  'Automatic', 'Cooling', 'Heating', 'Dehumidification', 'Air circulator', 'Other'
+
+aircon.setMode('Cooling')
+aircon.getMode()
+{'mode': 'Cooling'}
+```
+Set or Get a HVACs fan speed:
+Note - your HVAC may not support all fan speeds.
+```
+supported modes = 'Automatic', 'Minimum', 'Low', 'Medium-Low', 'Medium', 'Medium-High', 'High', 'Very High', 'Max'
+
+aircon.setFanSpeed('Medium-High')
+aircon.getFanSpeed()
+{'fan_speed': 'Medium-High'}
+```
+### Get HVAC attributes at once:
+```
+aircon.update()
+{'status': 'On', 'set_temperature': 25, 'fan_speed': 'Medium-High', 'room_temperature': 25, 'mode': 'Cooling'}
+```
+## Using the library with Home Assistant
 
 There are two files under /bin
 'example.py' is an executable Python3 script that will discover your
@@ -65,10 +109,10 @@ Some ideas in his own repo got implemented in my own code.
 (https://github.com/jethrocarr/echonetlite-hvac-mqtt-service.git)
 
 Also big thanks to Futomi Hatano for open sourcing a high quality and
-extremely well documented ECHONET Lite library in Node JS that  
-formed the basis of my reverse engineering efforts.
+extremely well documented ECHONET Lite library in Node JS that formed
+the basis of my reverse engineering efforts.
 (https://github.com/futomi/node-echonet-lite)
 
-# License
+## License
 
 This application is licensed under an MIT license, refer to LICENSE for details.
