@@ -24,12 +24,12 @@ pip install mitsubishi_echonet
 
 ## Basic usage
 ### Discover a list of HVAC using:
-```
+```python
 aircons = mit.discover('Home air conditioner')
 ```
 
 ### Turn HVAC on or off:
-```
+```python
 aircon.on()
 aircon.off()
 aircon.status()
@@ -37,14 +37,14 @@ aircon.status()
 ```
 
 ### Set or Get a HVACs target temperature
-```
+```python
 aircon.setOperationalTemperature(25)
 aircon.getOperationalTemperature()
 {'set_temperature': 25}
 ```
 
 ### Set or Get a HVACs mode of operation:
-```
+```python
 supported modes =  'Automatic', 'Cooling', 'Heating', 'Dehumidification', 'Air circulator', 'Other'
 
 aircon.setMode('Cooling')
@@ -53,7 +53,7 @@ aircon.getMode()
 ```
 Set or Get a HVACs fan speed:
 Note - your HVAC may not support all fan speeds.
-```
+```python
 supported modes = 'Automatic', 'Minimum', 'Low', 'Medium-Low', 'Medium', 'Medium-High', 'High', 'Very High', 'Max'
 
 aircon.setFanSpeed('Medium-High')
@@ -61,7 +61,7 @@ aircon.getFanSpeed()
 {'fan_speed': 'Medium-High'}
 ```
 ### Get HVAC attributes at once:
-```
+```python
 aircon.update()
 {'status': 'On', 'set_temperature': 25, 'fan_speed': 'Medium-High', 'room_temperature': 25, 'mode': 'Cooling'}
 ```
@@ -75,7 +75,7 @@ Mitsubishi HVAC and play with some settings.
 Copy it into your 'custom_components'
 
 In configuration.yaml add the following lines:
-```
+```yaml
 climate:
   - platform: mitsubishi
     ip_address: 1.2.3.4
