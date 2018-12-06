@@ -1,19 +1,21 @@
 """
-Mitsubishi platform to control HVAC using MAC-568IF-E Interface over Echonet
-Protocol. Probably would work for other ECHONET-LITE HVACs as well...
+Mitsubishi platform to control HVAC using MAC-568IF-E Interface over ECHONET-lite
+Protocol
 
 Uses mitsubishi_echonet python Library for API calls.
 The library should download automatically and it should download to config/deps
 but it didnt seem to work for ages so you may need to restart appliance a few times.
 
-As a last resort if the automatic pip install does not work in hass.io:
+As a last resort if the automatic pip install doesnt work:
 1. Download the GIT repo
 2. Copy the 'misubishi-echonet' subfolder out of the repo and into 'custom_components
 3. Flip the comments on the following lines:
-import mitsubishi_echonet as mit
-# import custom_components.mitsubishi_echonet as mit
+from mitsubishi_echonet import lib_mitsubishi as mit
+# from custom_components.mitsubishi_echonet import lib_mitsubishi as mit
 
 """
+
+import logging
 
 from homeassistant.components.climate import (
     ClimateDevice, ATTR_TARGET_TEMP_HIGH, ATTR_TARGET_TEMP_LOW,
@@ -23,21 +25,24 @@ from homeassistant.components.climate import (
     SUPPORT_OPERATION_MODE, SUPPORT_SWING_MODE,
     SUPPORT_TARGET_TEMPERATURE_HIGH, SUPPORT_TARGET_TEMPERATURE_LOW,
     SUPPORT_ON_OFF)
-from homeassistant.const import TEMP_CELSIUS, TEMP_FAHRENHEIT, ATTR_TEMPERATURE, CONF_HOST, CONF_IP_ADDRESS
+from homeassistant.const import TEMP_CELSIUS, TEMP_FAHRENHEIT, ATTR_TEMPERATURE, CONF_HOST, CONF_IP_ADDRESS, CONF_NAME
 
 DOMAIN = "mitsubishi"
-REQUIREMENTS = ['mitsubishi_echonet==0.1.3']
+REQUIREMENTS = ['mitsubishi_echonet==0.1.6']
 SUPPORT_FLAGS = SUPPORT_TARGET_HUMIDITY_LOW | SUPPORT_TARGET_HUMIDITY_HIGH
 
 import mitsubishi_echonet as mit
 # import custom_components.mitsubishi_echonet as mit
 
+_LOGGER = logging.getLogger(__name__)
+
 def setup_platform(hass, config, add_entities, discovery_info=None):
-    # from mitsubishi_echonet import lib_mitsubishi as mit
+
     """Set up the Mitsubishi ECHONET climate devices."""
     add_entities([
-        MitsubishiClimate('PEA_RP140', config.get(CONF_IP_ADDRESS), TEMP_CELSIUS, None, None,
-                     None, None, None, 'cool', True)
+        MitsubishiClimate(config.get(CONF_NAME),
+           mit.HomeAirConditioner(config.get(CONF_IP_ADDRESS)),
+           TEMP_CELSIUS)
     ])
 
 
@@ -45,58 +50,73 @@ class MitsubishiClimate(ClimateDevice):
 
     """Representation of a Mitsubishi ECHONET climate device."""
 
-    def __init__(self, name, ip_address, unit_of_measurement,
-                 away, hold, target_humidity, current_humidity, current_swing_mode,
-                 current_operation, is_on):
-        # from mitsubishi_echonet import lib_mitsubishi as mit
+    def __init__(self, name, echonet_hvac, unit_of_measurement):
+
         """Initialize the climate device."""
         self._name = name
-        self._api = mit.HomeAirConditioner(ip_address) #new line
-        data = self._api.update()
+        self._api = echonet_hvac #new line
+        _LOGGER.debug("ECHONET lite HVAC component added on %s", self._api.netif)
+        _LOGGER.debug("Available get attributes are %s", self._api.fetchGetProperties())
+        available_properties = self._api.fetchGetProperties()
+
+        self._unit_of_measurement = unit_of_measurement
         self._support_flags = SUPPORT_FLAGS
-        self._support_flags = self._support_flags | SUPPORT_TARGET_TEMPERATURE
-        # if target_temperature is not None:
+
+        # if is_on is not None:
+        self._support_flags = self._support_flags | SUPPORT_ON_OFF
+
+        if 'Operation mode setting' in available_properties:
+           self._support_flags = self._support_flags | SUPPORT_OPERATION_MODE
+
+        if 'Set temperature value' in available_properties:
+           self._support_flags = self._support_flags | SUPPORT_TARGET_TEMPERATURE
+
+        if 'Air flow rate setting' in available_properties:
+           self._support_flags = self._support_flags | SUPPORT_FAN_MODE
+
+
+        #if target_humidity is not None:
         #    self._support_flags = \
-        #        self._support_flags | SUPPORT_TARGET_TEMPERATURE
-        if away is not None:
-            self._support_flags = self._support_flags | SUPPORT_AWAY_MODE
-        if hold is not None:
-            self._support_flags = self._support_flags | SUPPORT_HOLD_MODE
-        # if current_fan_mode is not None:
-        #    self._support_flags = self._support_flags | SUPPORT_FAN_MODE
-        self._support_flags = self._support_flags | SUPPORT_FAN_MODE
-        if target_humidity is not None:
-            self._support_flags = \
-                self._support_flags | SUPPORT_TARGET_HUMIDITY
-        if current_swing_mode is not None:
-            self._support_flags = self._support_flags | SUPPORT_SWING_MODE
-        if current_operation is not None:
-            self._support_flags = self._support_flags | SUPPORT_OPERATION_MODE
+        #        self._support_flags | SUPPORT_TARGET_HUMIDITY
+
+        # if current_swing_mode is not None:
+        #    self._support_flags = self._support_flags | SUPPORT_SWING_MODE
+
         # if target_temp_high is not None:
         #   self._support_flags = \
         #        self._support_flags | SUPPORT_TARGET_TEMPERATURE_HIGH
         # if target_temp_low is not None:
         #    self._support_flags = \
         #        self._support_flags | SUPPORT_TARGET_TEMPERATURE_LOW
-        if is_on is not None:
-            self._support_flags = self._support_flags | SUPPORT_ON_OFF
+
+        data = self._api.update()
+
+        # Current and Target temperature
         self._target_temperature = data['set_temperature']
-        self._target_humidity = target_humidity
-        self._unit_of_measurement = unit_of_measurement
-        self._away = away
-        self._hold = hold
         self._current_temperature = data['room_temperature']
-        self._current_humidity = current_humidity
+
+        # Mode and fan speed
         self._current_fan_mode = data['fan_speed']
-        self._current_operation = (data['mode'])
-        #self._aux = aux
-        self._current_swing_mode = current_swing_mode
+        self._current_operation = data['mode']
+
+        # Humidity variables
+        self._current_humidity = data['current_humidity'] if 'current_humidity' in data else None
+        self._target_humidity = data['target_humidity'] if 'target_humidity' in data else None
+
+        # self._away = away
+        # self._hold = hold
+        # self._aux = aux
+
+        self._current_swing_mode = current_swing_mode if 'current_swing_mode' in data else None
+
         #self._fan_list = ['On Low', 'On High', 'Auto Low', 'Auto High', 'Off']
         self._fan_list = ['Low', 'Medium-High']
         self._operation_list = ['Heating', 'Cooling', 'Air circulator', 'Dehumidification', 'Automatic']
         self._swing_list = ['Auto', '1', '2', '3', 'Off']
+
         # self._target_temperature_high = target_temp_high
         # self._target_temperature_low = target_temp_low
+
         self._on = True if data['status'] is 'On' else False
 
 

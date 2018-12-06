@@ -1,2 +1,5 @@
 *.pyc
 *.tar.gz
+build/*
+dist/*
+mitsubishi_echonet.egg-info/*
