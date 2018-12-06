@@ -1,17 +1,17 @@
 """
 Mitsubishi platform to control HVAC using MAC-568IF-E Interface over Echonet
-Protocol
+Protocol. Probably would work for other ECHONET-LITE HVACs as well...
 
 Uses mitsubishi_echonet python Library for API calls.
 The library should download automatically and it should download to config/deps
 but it didnt seem to work for ages so you may need to restart appliance a few times.
 
-As a last resort if the automatic pip install doesnt work:
+As a last resort if the automatic pip install does not work in hass.io:
 1. Download the GIT repo
 2. Copy the 'misubishi-echonet' subfolder out of the repo and into 'custom_components
 3. Flip the comments on the following lines:
-from mitsubishi_echonet import lib_mitsubishi as mit
-# from custom_components.mitsubishi_echonet import lib_mitsubishi as mit
+import mitsubishi_echonet as mit
+# import custom_components.mitsubishi_echonet as mit
 
 """
 
