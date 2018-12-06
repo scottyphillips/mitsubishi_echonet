@@ -2,40 +2,15 @@
 import mitsubishi_echonet as mit
 import time
 
-aircon = False
+aircons = False
 # Discover HVAC Echonet objects
-while aircon == False:
-    print("Discovering Air Conditioner..")
-    aircon = mit.discover()[0]
+while aircons == False:
+    print("Discovering Air Conditioners..")
+    aircons = mit.discover()
 
-print (aircon.fetchSetProperties())
-# Returns dict of HVAC status
-# aircon.off()
-# time.sleep(1)
-# Sets the fan speed
-aircon.setFanSpeed('Medium-High')
-time.sleep(1)
+for aircon in aircons:
+   print("Airconditioner {} available properties:").format(aircon.netif)
+   print(aircon.fetchSetProperties())
 
-# aircon.getOperationalStatus()
-# time.sleep(1)
-
-
-# Sets the mode
-
-aircon.setMode('Heating')
-# time.sleep(1)
-
-# Sets the temperature
-# aircon.setOperationalTemperature(18)
-# time.sleep(1)
-
-
-
-# Turns on the Air Conditioner:
-# aircon.On()
-
-# Returns dict of HVAC status
-# aircon.Update()
-
-# Turns off the Air Conditioner:
-# aircon.Off()
+   print("Getting current operational parameters")
+   print(aircon.update())
