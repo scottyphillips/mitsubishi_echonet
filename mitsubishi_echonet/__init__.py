@@ -209,7 +209,6 @@ def discover(echonet_class = ""):
             e = eval(EPC_CODE[edt['eojgc']][edt['eojcc']]['class'])(node['server'][0], edt['eojci'])
             print('ECHONET lite node discovered at {} - {} class'.format(node['server'][0], EOJX_CLASS[edt['eojgc']][edt['eojcc']]))
             if echonet_class == EOJX_CLASS[edt['eojgc']][edt['eojcc']] or echonet_class == "":
-                print("adding to group")
                 eoa.append(e)
 
     return eoa
@@ -349,7 +348,7 @@ class EchoNetNode:
         return self.setMessage(0x80, 0x30)
 
     """
-    On sets the node to OFF.
+    Off sets the node to OFF.
 
     """
     def off (self): # EPC 0x80
@@ -357,6 +356,9 @@ class EchoNetNode:
 
     def fetchSetProperties (self): # EPC 0x80
         return self.propertyMaps['setProperties']
+
+    def fetchGetProperties (self): # EPC 0x80
+        return self.propertyMaps['getProperties']
 
 """Class for Home AirConditioner Objects"""
 class HomeAirConditioner(EchoNetNode):
@@ -389,12 +391,19 @@ class HomeAirConditioner(EchoNetNode):
 
     """
     def update(self):
+        # at this stage we only care about a subset of gettable attributes that are relevant
+        # down the track i might try to pull all of them..
+        attributes = [0x80, # Op status
+                      0xB3, # Set temperature
+                      0xA0, # fan speed
+                      0xBB, # room temperature
+                      0xB0] # mode
+                      #0x8A] # manufactorers code
+        opc = []
         self.last_transaction_id += 1
-        opc = [{'EPC' :0x80}, # Op status
-               {'EPC': 0xB3}, # Set temperature
-               {'EPC': 0xA0}, # fan speed
-               {'EPC': 0xBB}, # room temperature
-               {'EPC': 0xB0}] # mode
+        for value in attributes:
+          if value in self.propertyMaps['getProperties'].values():
+             opc.append({'EPC': value})
         self.JSON = getOpCode(self.netif, self.eojgc, self.eojcc, self.instance, opc, self.last_transaction_id )
         self.setTemperature = self.JSON['set_temperature']
         self.mode = self.JSON['mode']

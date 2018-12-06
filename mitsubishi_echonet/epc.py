@@ -1321,8 +1321,8 @@ EPC_CODE = {
 
 EPC_SUPER = {
 	0x80: ('Operation status', None),
-	0x81: ('Installation location', None),
-	0x82: ('Standard version information', None),
+	0x81: ('Installation location', f._FF0081),
+	0x82: ('Standard version information', f._FF0082),
 	0x83: ('Identification number', None),
 	0x84: ('Measured instantaneous power consumption', None),
 	0x85: ('Measured cumulative power consumption', None),
@@ -1330,7 +1330,7 @@ EPC_SUPER = {
 	0x87: ('Current limit setting', None),
 	0x88: ('Fault status', None),
 	0x89: ('Fault description', None),
-	0x8A: ('Manufacturer code', None),
+	0x8A: ('Manufacturer code', f._FF008A),
 	0x8B: ('Business facility code', None),
 	0x8C: ('Product code', None),
 	0x8D: ('Production number', None),

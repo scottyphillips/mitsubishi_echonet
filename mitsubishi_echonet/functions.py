@@ -36,8 +36,23 @@ class Function:
         }
     # Check status of Air Conditioner
     def _013080(edt):
-        ops_value = int.from_bytes(edt, 'little')
+        ops_value = int.from_bytes(edt, 'big')
         return {'status': ('On' if ops_value == 0x30 else 'Off')}
+
+    # Check install location
+    def _FF0081(edt):
+        # ops_value = int.from_bytes(edt, 'little')
+        return {'install_location': None}
+
+    # Check standard version information
+    def _FF0082(edt):
+        # ops_value = int.from_bytes(edt, 'little')
+        return {'version_info': None}
+
+    # Check standard version information
+    def _FF008A(edt):
+        ops_value = int.from_bytes(edt, 'big')
+        return {'manufacturer': ops_value}
 
     # Check status of Configured Temperature
     def _0130B3(edt):
@@ -90,7 +105,6 @@ class Function:
         return {'mode': values.get(op_mode, "Invalid setting" )}
 
     def _FF009E(edt):
-        setProperties = Function._FF009X(edt)
         return {'setProperties': Function._FF009X(edt)}
 
     def _FF009F(edt):

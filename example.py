@@ -11,7 +11,7 @@ while aircons == False:
 for aircon in aircons:
    print("Airconditioner {} available properties:".format(aircon.netif))
    #print(aircon.netif)
-   print(aircon.fetchSetProperties())
+   print(aircon.fetchGetProperties())
 
    print("Getting current operational parameters")
    print(aircon.update())
