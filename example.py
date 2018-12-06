@@ -9,7 +9,8 @@ while aircons == False:
     aircons = mit.discover('Home air conditioner')
 
 for aircon in aircons:
-   print("Airconditioner {} available properties:").format(aircon.netif)
+   print("Airconditioner {} available properties:".format(aircon.netif))
+   #print(aircon.netif)
    print(aircon.fetchSetProperties())
 
    print("Getting current operational parameters")

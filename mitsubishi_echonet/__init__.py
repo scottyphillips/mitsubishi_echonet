@@ -209,6 +209,7 @@ def discover(echonet_class = ""):
             e = eval(EPC_CODE[edt['eojgc']][edt['eojcc']]['class'])(node['server'][0], edt['eojci'])
             print('ECHONET lite node discovered at {} - {} class'.format(node['server'][0], EOJX_CLASS[edt['eojgc']][edt['eojcc']]))
             if echonet_class == EOJX_CLASS[edt['eojgc']][edt['eojcc']] or echonet_class == "":
+                print("adding to group")
                 eoa.append(e)
 
     return eoa
