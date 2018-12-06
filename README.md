@@ -51,7 +51,8 @@ aircon.setMode('Cooling')
 aircon.getMode()
 {'mode': 'Cooling'}
 ```
-Set or Get a HVACs fan speed:
+###Set or Get a HVACs fan speed:
+
 Note - your HVAC may not support all fan speeds.
 ```python
 supported modes = 'Automatic', 'Minimum', 'Low', 'Medium-Low', 'Medium', 'Medium-High', 'High', 'Very High', 'Max'
