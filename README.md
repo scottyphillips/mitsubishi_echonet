@@ -14,12 +14,14 @@ as a straight up library, no middleware, Node JS or Docker containers needed!
 It is designed to work with Python 3.7 out of the box as
 that was the environment I was working on.
 
-# Instructions
+## Instructions
 
 Simplest way to install is to use pip:
-pip install mitsubishi_echonet
 
-# Using the library
+```
+pip install mitsubishi_echonet
+```
+## Using the library
 
 There are two files under /bin
 'example.py' is an executable Python3 script that will discover your
@@ -29,12 +31,12 @@ Mitsubishi HVAC and play with some settings.
 Copy it into your 'custom_components'
 
 In configuration.yaml add the following lines:
-
+```
 climate:
   - platform: mitsubishi
     ip_address: 1.2.3.4
-
-# Help! Home Assistant could not run the module?
+```
+## Help! Home Assistant could not run the module?
 
 When I was playing around with this I had difficulty getting hass.io to install
 the library from pip. No idea why, but eventually I found the correct
@@ -46,15 +48,15 @@ However, there is a workaround:
 2. Copy the 'mitsubishi_echonet' subfolder directly out of the repo and
 into the 'custom_components' directory.
 3. Flip the comments on the following lines in mitsubishi.py:
-
-from mitsubishi_echonet import lib_mitsubishi as mit
-&#35; from custom_components.mitsubishi_echonet import lib_mitsubishi as mit
-
+```
+import mitsubishi_echonet as mit
+# import custom_components.mitsubishi_echonet as mit
+```
 Make sure you enable the ECHONET Lite service in the official Mitsubishi App.
 
 Comments and suggestions are welcome!
 
-# Thanks
+## Thanks
 
 Thanks to Jeffro Carr who inspired me to write my own native Python ECHONET
 library for Home Assistant. I could not get his Node JS Docker container
