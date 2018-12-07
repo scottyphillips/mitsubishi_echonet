@@ -28,7 +28,7 @@ from homeassistant.components.climate import (
 from homeassistant.const import TEMP_CELSIUS, TEMP_FAHRENHEIT, ATTR_TEMPERATURE, CONF_HOST, CONF_IP_ADDRESS, CONF_NAME
 
 DOMAIN = "mitsubishi"
-REQUIREMENTS = ['mitsubishi_echonet==0.1.6']
+REQUIREMENTS = ['mitsubishi_echonet==0.1.7']
 SUPPORT_FLAGS = SUPPORT_TARGET_HUMIDITY_LOW | SUPPORT_TARGET_HUMIDITY_HIGH
 
 import mitsubishi_echonet as mit
