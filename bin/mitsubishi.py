@@ -10,8 +10,8 @@ As a last resort if the automatic pip install doesnt work:
 1. Download the GIT repo
 2. Copy the 'misubishi-echonet' subfolder out of the repo and into 'custom_components
 3. Flip the comments on the following lines:
-from mitsubishi_echonet import lib_mitsubishi as mit
-# from custom_components.mitsubishi_echonet import lib_mitsubishi as mit
+import mitsubishi_echonet as mit
+# import custom_components.mitsubishi_echonet as mit
 
 """
 
