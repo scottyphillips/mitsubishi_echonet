@@ -8,7 +8,7 @@ with open(path.join(this_directory, 'README.md')) as f:
 
 setup(
     name='mitsubishi_echonet',
-    version='0.1.7',
+    version='0.1.8',
     author='Scott Phillips',
     author_email='jrh@example.com',
     packages=['mitsubishi_echonet'],

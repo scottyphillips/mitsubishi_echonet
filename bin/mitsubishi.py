@@ -123,11 +123,14 @@ class MitsubishiClimate(ClimateDevice):
     def update(self):
         """Get the latest state from the HVAC."""
         data = self._api.update()
-        self._target_temperature = data['set_temperature']
-        self._current_temperature = data['room_temperature']
-        self._current_fan_mode = data['fan_speed']
-        self._current_operation =  data['mode']
-        self._on = True if data['status'] is 'On' else False
+        if data is not False:
+            self._target_temperature = data['set_temperature']
+            self._current_temperature = data['room_temperature']
+            self._current_fan_mode = data['fan_speed']
+            self._current_operation =  data['mode']
+            self._on = True if data['status'] is 'On' else False
+        else:
+           _LOGGER.warning("HA requested an update for HVAC %s but no data was received", self._api.netif)
 
     @property
     def supported_features(self):

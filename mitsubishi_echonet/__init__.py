@@ -229,18 +229,19 @@ def getOpCode(ip_address, deojgc, deojcc, deojci, opc, tid=0x01):
         }
         # Build ECHONET discover messafge.
         message = buildEchonetMsg(tx_payload)
-        tx_data = sendMessage(message, ip_address);
-        rx = decodeEchonetMsg(tx_data[0]['payload'])
+        rx_data = sendMessage(message, ip_address)
         return_data = {}
-        # Action EDT payload by calling applicable function using lookup table
-        for value in rx['OPC']:
-            rx_edt = value['EDT']
-            rx_epc = value['EPC']
-            if rx_epc in EPC_CODE[deojgc][deojcc]['functions']:
-                edt = EPC_CODE[deojgc][deojcc]['functions'][rx_epc][1](rx_edt)
-            else:
-                edt = EPC_SUPER[rx_epc][1](rx_edt)
-            return_data.update(edt)
+        if len(rx_data) > 0:
+            rx = decodeEchonetMsg(tx_data[0]['payload'])
+            # Action EDT payload by calling applicable function using lookup table
+            for value in rx['OPC']:
+                rx_edt = value['EDT']
+                rx_epc = value['EPC']
+                if rx_epc in EPC_CODE[deojgc][deojcc]['functions']:
+                    edt = EPC_CODE[deojgc][deojcc]['functions'][rx_epc][1](rx_edt)
+                else:
+                    edt = EPC_SUPER[rx_epc][1](rx_edt)
+                return_data.update(edt)
         return return_data
 
 def getAllPropertyMaps(ip_address, deojgc, deojcc, deojci):
@@ -404,13 +405,15 @@ class HomeAirConditioner(EchoNetNode):
         for value in attributes:
           if value in self.propertyMaps['getProperties'].values():
              opc.append({'EPC': value})
-        self.JSON = getOpCode(self.netif, self.eojgc, self.eojcc, self.instance, opc, self.last_transaction_id )
-        self.setTemperature = self.JSON['set_temperature']
-        self.mode = self.JSON['mode']
-        self.fan_speed = self.JSON['fan_speed']
-        self.roomTemperature = self.JSON['room_temperature']
-        self.status = self.JSON['status']
-        return self.JSON
+        returned_data = getOpCode(self.netif, self.eojgc, self.eojcc, self.instance, opc, self.last_transaction_id )
+        if returned_data is not False:
+            self.JSON = returned_data
+            self.setTemperature = self.JSON['set_temperature']
+            self.mode = self.JSON['mode']
+            self.fan_speed = self.JSON['fan_speed']
+            self.roomTemperature = self.JSON['room_temperature']
+            self.status = self.JSON['status']
+        return returned_data
 
     """
     GetOperationaTemperature get the temperature that has been set in the HVAC

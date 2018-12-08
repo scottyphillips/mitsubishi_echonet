@@ -360,17 +360,18 @@ def getOpCode(ip_address, deojgc, deojcc, deojci, opc, tid=0x01):
             'OPC' : opc
         }
         message = buildEchonetMsg(tx_payload)
-        tx_data = sendMessage(message, ip_address);
-        rx = decodeEchonetMsg(tx_data[0]['payload'])
+        rx_data = sendMessage(message, ip_address);
         return_data = {}
-        for value in rx['OPC']:
-            rx_edt = value['EDT']
-            rx_epc = value['EPC']
-            if rx_epc in EPC_CODE[deojgc][deojcc]['functions']:
-                edt = EPC_CODE[deojgc][deojcc]['functions'][rx_epc][1](rx_edt)
-            else:
-                edt = EPC_SUPER[rx_epc][1](rx_edt)
-            return_data.update(edt)
+        if len(rx_data) > 0:
+            rx = decodeEchonetMsg(rx_data[0]['payload'])
+            for value in rx['OPC']:
+                rx_edt = value['EDT']
+                rx_epc = value['EPC']
+                if rx_epc in EPC_CODE[deojgc][deojcc]['functions']:
+                    edt = EPC_CODE[deojgc][deojcc]['functions'][rx_epc][1](rx_edt)
+                else:
+                    edt = EPC_SUPER[rx_epc][1](rx_edt)
+                return_data.update(edt)
         return return_data
 
 def getAllPropertyMaps(ip_address, deojgc, deojcc, deojci):
@@ -466,13 +467,15 @@ class HomeAirConditioner(EchoNetNode):
         for value in attributes:
           if value in self.propertyMaps['getProperties'].values():
              opc.append({'EPC': value})
-        self.JSON = getOpCode(self.netif, self.eojgc, self.eojcc, self.instance, opc, self.last_transaction_id )
-        self.setTemperature = self.JSON['set_temperature']
-        self.mode = self.JSON['mode']
-        self.fan_speed = self.JSON['fan_speed']
-        self.roomTemperature = self.JSON['room_temperature']
-        self.status = self.JSON['status']
-        return self.JSON
+        returned_data = getOpCode(self.netif, self.eojgc, self.eojcc, self.instance, opc, self.last_transaction_id )
+        if returned_data is not False:
+            self.JSON = returned_data
+            self.setTemperature = self.JSON['set_temperature']
+            self.mode = self.JSON['mode']
+            self.fan_speed = self.JSON['fan_speed']
+            self.roomTemperature = self.JSON['room_temperature']
+            self.status = self.JSON['status']
+        return returned_data
 
     def getOperationalTemperature(self):
         self.setTemperature = self.getMessage(0xB3)['set_temperature']
@@ -555,11 +558,14 @@ class MitsubishiClimate(ClimateDevice):
     def update(self):
         """Get the latest state from the HVAC."""
         data = self._api.update()
-        self._target_temperature = data['set_temperature']
-        self._current_temperature = data['room_temperature']
-        self._current_fan_mode = data['fan_speed']
-        self._current_operation =  data['mode']
-        self._on = True if data['status'] is 'On' else False
+        if data is not False:
+           self._target_temperature = data['set_temperature']
+           self._current_temperature = data['room_temperature']
+           self._current_fan_mode = data['fan_speed']
+           self._current_operation =  data['mode']
+           self._on = True if data['status'] is 'On' else False
+        else:
+           _LOGGER.warning("HA requested an update for HVAC %s but no data was received", self._api.netif)
 
     @property
     def supported_features(self):
