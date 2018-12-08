@@ -232,7 +232,7 @@ def getOpCode(ip_address, deojgc, deojcc, deojci, opc, tid=0x01):
         rx_data = sendMessage(message, ip_address)
         return_data = {}
         if len(rx_data) > 0:
-            rx = decodeEchonetMsg(tx_data[0]['payload'])
+            rx = decodeEchonetMsg(rx_data[0]['payload'])
             # Action EDT payload by calling applicable function using lookup table
             for value in rx['OPC']:
                 rx_edt = value['EDT']
