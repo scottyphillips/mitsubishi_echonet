@@ -28,11 +28,11 @@ from homeassistant.components.climate import (
 from homeassistant.const import TEMP_CELSIUS, TEMP_FAHRENHEIT, ATTR_TEMPERATURE, CONF_HOST, CONF_IP_ADDRESS, CONF_NAME
 
 DOMAIN = "mitsubishi"
-REQUIREMENTS = ['mitsubishi_echonet==0.1.8.1']
+REQUIREMENTS = ['mitsubishi_echonet==0.1.9']
 SUPPORT_FLAGS = 0
 
-# import mitsubishi_echonet as mit
-import custom_components.mitsubishi_echonet as mit
+import mitsubishi_echonet as mit
+# import custom_components.mitsubishi_echonet as mit
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -117,7 +117,7 @@ class MitsubishiClimate(ClimateDevice):
 
             self._current_humidity = None
             self._target_humidity = None
-        
+
 
         #self._fan_list = ['On Low', 'On High', 'Auto Low', 'Auto High', 'Off']
         self._fan_list = ['low', 'medium-high']
