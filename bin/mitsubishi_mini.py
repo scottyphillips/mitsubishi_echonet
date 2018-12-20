@@ -17,13 +17,13 @@ MODES = {
 	'auto':		0x41,
 	'cool':  	0x42,
 	'heat':  	0x43,
-	'dehumidification': 0x44,
-	'fan':	    0x45,
+	'dehumidify': 0x44,
+	'fan_only':	    0x45,
 	'Other': 	0x40
 }
 
 FAN_SPEED = {
-	'automatic':	0x41,
+	'auto':	       0x41,
 	'minimum':  	0x31,
 	'low':  		0x32,
 	'medium-low': 	0x33,
@@ -125,7 +125,7 @@ class Function:
            0x41: 'auto',
            0x42: 'cool',
            0x43: 'heat',
-           0x44: 'dehumidification',
+           0x44: 'dehumidify',
            0x45: 'fan',
            0x40: 'other'
         }
@@ -549,7 +549,7 @@ class MitsubishiClimate(ClimateDevice):
 
         #self._fan_list = ['On Low', 'On High', 'Auto Low', 'Auto High', 'Off']
         self._fan_list = ['low', 'medium-high']
-        self._operation_list = ['heat', 'cool', 'fan', 'dehumidification', 'auto']
+        self._operation_list = ['heat', 'cool', 'fan_only', 'auto']
         self._swing_list = ['auto', '1', '2', '3', 'off']
 
         self._on = True if data['status'] is 'On' else False

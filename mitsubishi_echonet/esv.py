@@ -19,11 +19,11 @@ INF_SNA = 		0x53
 SETGET_SNA =	0x5E
 
 MODES = {
-	'auto':		0x41,
+	'auto':  	0x41,
 	'cool':  	0x42,
 	'heat':  	0x43,
 	'dehumidify': 0x44,
-	'fan':	    0x45,
+	'fan_only':	0x45,
 	'other': 	0x40
 }
 

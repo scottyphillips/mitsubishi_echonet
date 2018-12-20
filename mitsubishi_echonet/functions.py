@@ -99,7 +99,7 @@ class Function:
            0x42: 'cool',
            0x43: 'heat',
            0x44: 'dehumidify',
-           0x45: 'fan',
+           0x45: 'fan_only',
            0x40: 'other'
         }
         return {'mode': values.get(op_mode, "Invalid setting" )}

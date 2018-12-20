@@ -45,21 +45,21 @@ aircon.getOperationalTemperature()
 
 ### Set or Get a HVACs mode of operation:
 ```python
-supported modes =  'Automatic', 'Cooling', 'Heating', 'Dehumidification', 'Air circulator', 'Other'
+supported modes =  'auto', 'cool', 'heat', 'dehumidify', 'fan_only', 'other'
 
-aircon.setMode('Cooling')
+aircon.setMode('cool')
 aircon.getMode()
-{'mode': 'Cooling'}
+{'mode': 'cool'}
 ```
 ### Set or Get a HVACs fan speed:
 
 Note - your HVAC may not support all fan speeds.
 ```python
-supported modes = 'Automatic', 'Minimum', 'Low', 'Medium-Low', 'Medium', 'Medium-High', 'High', 'Very High', 'Max'
+supported modes = 'auto', 'minimum', 'low', 'medium-Low', 'medium', 'medium-high', 'high', 'very high', 'max'
 
-aircon.setFanSpeed('Medium-High')
+aircon.setFanSpeed('medium-high')
 aircon.getFanSpeed()
-{'fan_speed': 'Medium-High'}
+{'fan_speed': 'medium-high'}
 ```
 ### Get HVAC attributes at once:
 ```python

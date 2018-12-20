@@ -28,7 +28,7 @@ from homeassistant.components.climate import (
 from homeassistant.const import TEMP_CELSIUS, TEMP_FAHRENHEIT, ATTR_TEMPERATURE, CONF_HOST, CONF_IP_ADDRESS, CONF_NAME
 
 DOMAIN = "mitsubishi"
-REQUIREMENTS = ['mitsubishi_echonet==0.1.9']
+REQUIREMENTS = ['mitsubishi_echonet==0.1.9.1']
 SUPPORT_FLAGS = 0
 
 import mitsubishi_echonet as mit
@@ -132,7 +132,7 @@ class MitsubishiClimate(ClimateDevice):
 
         #self._fan_list = ['On Low', 'On High', 'Auto Low', 'Auto High', 'Off']
         self._fan_list = ['low', 'medium-high']
-        self._operation_list = ['heat', 'cool', 'fan', 'auto', 'off']
+        self._operation_list = ['heat', 'cool', 'fan_only', 'auto', 'off']
         self._swing_list = ['auto', '1', '2', '3', 'off']
 
         # self._target_temperature_high = target_temp_high

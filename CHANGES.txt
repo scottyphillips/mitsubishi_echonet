@@ -6,4 +6,5 @@ v0.1.6, 07 Dec 2018 -- Documentation improvements and additional functions.
 v0.1.7, 07 Dec 2018 -- Trying to fix up pip imcompatabilities
 v0.1.8, 08 Dec 2018 -- Made the library a bit more tolerant of communication issues.
 v0.1.8.1, 08 Dec 2018 -- Bug fix that causes the library to fail
-v0.1.9, 20 Dec 2012 -- Minor Compatibility improvements with Home Assistant so it works with the HomeKit Integration
+v0.1.9, 20 Dec 2018 -- Minor Compatibility improvements with Home Assistant so it works with the HomeKit Integration
+v0.1.9.1, 20 Dec 2018 -- Aligned the fan mode to 'fan_only' for Lovelace compatibility
