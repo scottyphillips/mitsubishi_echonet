@@ -29,21 +29,30 @@ from homeassistant.const import TEMP_CELSIUS, TEMP_FAHRENHEIT, ATTR_TEMPERATURE,
 
 DOMAIN = "mitsubishi"
 REQUIREMENTS = ['mitsubishi_echonet==0.1.8.1']
-SUPPORT_FLAGS = SUPPORT_TARGET_HUMIDITY_LOW | SUPPORT_TARGET_HUMIDITY_HIGH
+SUPPORT_FLAGS = 0
 
-import mitsubishi_echonet as mit
-# import custom_components.mitsubishi_echonet as mit
+# import mitsubishi_echonet as mit
+import custom_components.mitsubishi_echonet as mit
 
 _LOGGER = logging.getLogger(__name__)
 
 def setup_platform(hass, config, add_entities, discovery_info=None):
 
     """Set up the Mitsubishi ECHONET climate devices."""
-    add_entities([
-        MitsubishiClimate(config.get(CONF_NAME),
+    entities = []
+    if config.get(CONF_IP_ADDRESS) is None:
+        hvac_list = mit.discover("Home air conditioner")
+        if len(hvac_list) > 0:
+            for idx, hvac in enumerate(hvac_list):
+                entities.append(MitsubishiClimate("hvac_{}".format(idx),
+                   hvac, TEMP_CELSIUS))
+        else:
+            _LOGGER.warning("No ECHONET lite HVAC found")
+    else:
+        entities.append(MitsubishiClimate(config.get(CONF_NAME),
            mit.HomeAirConditioner(config.get(CONF_IP_ADDRESS)),
-           TEMP_CELSIUS)
-    ])
+           TEMP_CELSIUS))
+    add_entities(entities)
 
 
 class MitsubishiClimate(ClimateDevice):
@@ -55,27 +64,20 @@ class MitsubishiClimate(ClimateDevice):
         """Initialize the climate device."""
         self._name = name
         self._api = echonet_hvac #new line
-        _LOGGER.debug("ECHONET lite HVAC component added on %s", self._api.netif)
-        _LOGGER.debug("Available get attributes are %s", self._api.fetchGetProperties())
-        available_properties = self._api.fetchGetProperties()
+        _LOGGER.debug("ECHONET lite HVAC %s component added to HA", self._api.netif)
+        # _LOGGER.debug("Available get attributes are %s", self._api.fetchGetProperties())
+
+        # available_properties = self._api.fetchGetProperties()
 
         self._unit_of_measurement = unit_of_measurement
         self._support_flags = SUPPORT_FLAGS
 
-        # if is_on is not None:
         self._support_flags = self._support_flags | SUPPORT_ON_OFF
+        self._support_flags = self._support_flags | SUPPORT_OPERATION_MODE
+        self._support_flags = self._support_flags | SUPPORT_TARGET_TEMPERATURE
+        self._support_flags = self._support_flags | SUPPORT_FAN_MODE
 
-        if 'Operation mode setting' in available_properties:
-           self._support_flags = self._support_flags | SUPPORT_OPERATION_MODE
-
-        if 'Set temperature value' in available_properties:
-           self._support_flags = self._support_flags | SUPPORT_TARGET_TEMPERATURE
-
-        if 'Air flow rate setting' in available_properties:
-           self._support_flags = self._support_flags | SUPPORT_FAN_MODE
-
-
-        #if target_humidity is not None:
+        # if target_humidity is not None:
         #    self._support_flags = \
         #        self._support_flags | SUPPORT_TARGET_HUMIDITY
 
@@ -88,31 +90,39 @@ class MitsubishiClimate(ClimateDevice):
         # if target_temp_low is not None:
         #    self._support_flags = \
         #        self._support_flags | SUPPORT_TARGET_TEMPERATURE_LOW
+        try:
+            data = self._api.update()
 
-        data = self._api.update()
+            # Current and Target temperature
+            self._target_temperature = data['set_temperature'] if 'set_temerature' in data else 20
+            self._current_temperature = data['room_temperature'] if 'room_temperature' in data else 20
 
-        # Current and Target temperature
-        self._target_temperature = data['set_temperature'] if 'set_temperature' in data else 20
-        self._current_temperature = data['room_temperature'] if 'room_temperature' in data else 20
+            # Mode and fan speed
+            self._current_fan_mode = data['fan_speed'] if 'fan_speed' in data else 'Medium-High'
+            self._current_operation = data['mode'] if 'mode' in data else 'Auto'
 
-        # Mode and fan speed
-        self._current_fan_mode = data['fan_speed'] if 'fan_speed' in data else 'Low'
-        self._current_operation = data['mode'] if 'fan_speed' in data else 'Automatic'
+            self._current_humidity = data['current_humidity'] if 'current_humidity' in data else None
+            self._target_humidity = data['target_humidity'] if 'target_humidity' in data else None
+            self._current_swing_mode = current_swing_mode if 'current_swing_mode' in data else None
 
-        # Humidity variables
-        self._current_humidity = data['current_humidity'] if 'current_humidity' in data else None
-        self._target_humidity = data['target_humidity'] if 'target_humidity' in data else None
+        except KeyError:
+            _LOGGER.warning("HA requested an update from HVAC %s but no data was received. Using Defaults", self._api.netif)
 
-        # self._away = away
-        # self._hold = hold
-        # self._aux = aux
+            self._target_temperature = 20
+            self._current_temperature = 20
 
-        self._current_swing_mode = current_swing_mode if 'current_swing_mode' in data else None
+            # Mode and fan speed
+            self._current_fan_mode = 'medium-high'
+            self._current_operation = 'auto'
+
+            self._current_humidity = None
+            self._target_humidity = None
+        
 
         #self._fan_list = ['On Low', 'On High', 'Auto Low', 'Auto High', 'Off']
-        self._fan_list = ['Low', 'Medium-High']
-        self._operation_list = ['Heating', 'Cooling', 'Air circulator', 'Dehumidification', 'Automatic']
-        self._swing_list = ['Auto', '1', '2', '3', 'Off']
+        self._fan_list = ['low', 'medium-high']
+        self._operation_list = ['heat', 'cool', 'fan', 'auto']
+        self._swing_list = ['auto', '1', '2', '3', 'off']
 
         # self._target_temperature_high = target_temp_high
         # self._target_temperature_low = target_temp_low
@@ -122,15 +132,16 @@ class MitsubishiClimate(ClimateDevice):
 
     def update(self):
         """Get the latest state from the HVAC."""
-        data = self._api.update()
-        if data is not False:
-            self._target_temperature = data['set_temperature']
-            self._current_temperature = data['room_temperature']
-            self._current_fan_mode = data['fan_speed']
-            self._current_operation =  data['mode']
-            self._on = True if data['status'] is 'On' else False
-        else:
-           _LOGGER.warning("HA requested an update for HVAC %s but no data was received", self._api.netif)
+        try:
+           data = self._api.update()
+           if data is not False:
+              self._target_temperature = data['set_temperature']
+              self._current_temperature = data['room_temperature']
+              self._current_fan_mode = data['fan_speed']
+              self._current_operation =  data['mode']
+              self._on = True if data['status'] is 'On' else False
+        except KeyError:
+           _LOGGER.warning("HA requested an update from HVAC %s but no data was received", self._api.netif)
 
     @property
     def supported_features(self):

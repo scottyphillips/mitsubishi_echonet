@@ -14,12 +14,12 @@ INFC_RES =		0x7A
 SETGET_RES =	0x7E
 
 MODES = {
-	'Automatic':		0x41,
-	'Cooling':  		0x42,
-	'Heating':  		0x43,
+	'Auto':		0x41,
+	'Cool':  	0x42,
+	'Heat':  	0x43,
 	'Dehumidification': 0x44,
-	'Air circulator':	0x45,
-	'Other': 			0x40
+	'Fan':	    0x45,
+	'Other': 	0x40
 }
 
 FAN_SPEED = {
@@ -122,11 +122,11 @@ class Function:
     def _0130B0(edt):
         op_mode = int.from_bytes(edt, 'big')
         values = {
-           0x41: 'Automatic',
-           0x42: 'Cooling',
-           0x43: 'Heating',
+           0x41: 'Auto',
+           0x42: 'Cool',
+           0x43: 'Heat',
            0x44: 'Dehumidification',
-           0x45: 'Air circulator',
+           0x45: 'Fan',
            0x40: 'Other'
         }
         return {'mode': values.get(op_mode, "Invalid setting" )}
@@ -549,7 +549,7 @@ class MitsubishiClimate(ClimateDevice):
 
         #self._fan_list = ['On Low', 'On High', 'Auto Low', 'Auto High', 'Off']
         self._fan_list = ['Low', 'Medium-High']
-        self._operation_list = ['Heating', 'Cooling', 'Air circulator', 'Dehumidification', 'Automatic']
+        self._operation_list = ['Heat', 'Cool', 'Fan', 'Dehumidification', 'Auto']
         self._swing_list = ['Auto', '1', '2', '3', 'Off']
 
         self._on = True if data['status'] is 'On' else False

@@ -11,6 +11,7 @@ stage it will control the AC and thats it!
 import socket
 import struct
 import sys
+import time
 from .eojx import *
 from .epc  import *
 from .esv  import *
@@ -151,7 +152,15 @@ def sendMessage(message, ip_address):
     data =[]
     transaction_group = (ip_address, ENL_PORT)
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    sock.bind(('',ENL_PORT))
+    socket_open = True
+    while True:
+        try:
+            sock.bind(('',ENL_PORT))
+            break
+        except OSError:
+            # Wait for socket to be open:
+            time.sleep(0.5)
+
     # Set a timeout so the socket does not block
     # indefinitely when trying to receive data.
     sock.settimeout(0.5)
@@ -356,10 +365,16 @@ class EchoNetNode:
         return self.setMessage(0x80, 0x31)
 
     def fetchSetProperties (self): # EPC 0x80
-        return self.propertyMaps['setProperties']
+        if 'setProperties' in self.propertyMaps:
+            return self.propertyMaps['setProperties']
+        else:
+            return {}
 
     def fetchGetProperties (self): # EPC 0x80
-        return self.propertyMaps['getProperties']
+        if 'getProperties' in self.propertyMaps:
+            return self.propertyMaps['getProperties']
+        else:
+            return {}
 
 """Class for Home AirConditioner Objects"""
 class HomeAirConditioner(EchoNetNode):

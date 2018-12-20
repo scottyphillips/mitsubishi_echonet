@@ -66,15 +66,15 @@ class Function:
     def _0130A0(edt):
         op_mode = int.from_bytes(edt, 'big')
         values = {
-           0x41: 'Automatic',
-           0x31: 'Minimum',
-           0x32: 'Low',
-           0x33: 'Medium-Low',
-           0x34: 'Medium',
-           0x35: 'Medium-High',
-           0x36: 'High',
-           0x37: 'Very High',
-           0x38: 'Max'
+           0x41: 'auto',
+           0x31: 'minimum',
+           0x32: 'low',
+           0x33: 'medium-low',
+           0x34: 'medium',
+           0x35: 'medium-high',
+           0x36: 'high',
+           0x37: 'very High',
+           0x38: 'max'
         }
         return {'fan_speed': values.get(op_mode, "Invalid setting")}
 
@@ -95,12 +95,12 @@ class Function:
     def _0130B0(edt):
         op_mode = int.from_bytes(edt, 'big')
         values = {
-           0x41: 'Automatic',
-           0x42: 'Cooling',
-           0x43: 'Heating',
-           0x44: 'Dehumidification',
-           0x45: 'Air circulator',
-           0x40: 'Other'
+           0x41: 'auto',
+           0x42: 'cool',
+           0x43: 'heat',
+           0x44: 'dehumidify',
+           0x45: 'fan',
+           0x40: 'other'
         }
         return {'mode': values.get(op_mode, "Invalid setting" )}
 

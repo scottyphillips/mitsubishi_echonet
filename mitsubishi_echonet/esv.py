@@ -19,24 +19,24 @@ INF_SNA = 		0x53
 SETGET_SNA =	0x5E
 
 MODES = {
-	'Automatic':		0x41,
-	'Cooling':  		0x42,
-	'Heating':  		0x43,
-	'Dehumidification': 0x44,
-	'Air circulator':	0x45,
-	'Other': 			0x40
+	'auto':		0x41,
+	'cool':  	0x42,
+	'heat':  	0x43,
+	'dehumidify': 0x44,
+	'fan':	    0x45,
+	'other': 	0x40
 }
 
 FAN_SPEED = {
-	'Automatic':	0x41,
-	'Minimum':  	0x31,
-	'Low':  		0x32,
-	'Medium-Low': 	0x33,
-	'Medium':		0x34,
-	'Medium-High': 	0x35,
-	'High':			0x36,
-	'Very High':    0x37,
-	'Max':			0x38
+	'auto':	0x41,
+	'minimum':  	0x31,
+	'low':  		0x32,
+	'medium-Low': 	0x33,
+	'medium':		0x34,
+	'medium-High': 	0x35,
+	'high':			0x36,
+	'very High':    0x37,
+	'max':			0x38
 }
 
 ESV_CODES = {
