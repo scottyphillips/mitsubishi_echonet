@@ -15,3 +15,4 @@ for aircon in aircons:
 
    print("Getting current operational parameters")
    print(aircon.update())
+   aircon.setMode('heat')

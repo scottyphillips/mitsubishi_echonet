@@ -278,7 +278,7 @@ class MitsubishiClimate(ClimateDevice):
         else:
            if self._on == False:
               self.turn_on()
-              self._api.setMode(operation_mode)
+           self._api.setMode(operation_mode)
         self._current_operation = operation_mode
         self.schedule_update_ha_state()
 
