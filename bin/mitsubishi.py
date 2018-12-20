@@ -97,9 +97,15 @@ class MitsubishiClimate(ClimateDevice):
             self._target_temperature = data['set_temperature'] if 'set_temerature' in data else 20
             self._current_temperature = data['room_temperature'] if 'room_temperature' in data else 20
 
+            # Current power setting
+            self._on = True if data['status'] is 'On' else False
+
             # Mode and fan speed
             self._current_fan_mode = data['fan_speed'] if 'fan_speed' in data else 'Medium-High'
-            self._current_operation = data['mode'] if 'mode' in data else 'Auto'
+            if data['status'] is 'On':
+                self._current_operation = data['mode'] if 'mode' in data else 'auto'
+            else:
+                self._current_operation = 'off'
 
             self._current_humidity = data['current_humidity'] if 'current_humidity' in data else None
             self._target_humidity = data['target_humidity'] if 'target_humidity' in data else None
@@ -113,21 +119,26 @@ class MitsubishiClimate(ClimateDevice):
 
             # Mode and fan speed
             self._current_fan_mode = 'medium-high'
-            self._current_operation = 'auto'
+            self._current_operation = 'off'
 
             self._current_humidity = None
             self._target_humidity = None
 
+        # self._away = away
+        # self._hold = hold
+        # self._aux = aux
+
+
 
         #self._fan_list = ['On Low', 'On High', 'Auto Low', 'Auto High', 'Off']
         self._fan_list = ['low', 'medium-high']
-        self._operation_list = ['heat', 'cool', 'fan', 'auto']
+        self._operation_list = ['heat', 'cool', 'fan', 'auto', 'off']
         self._swing_list = ['auto', '1', '2', '3', 'off']
 
         # self._target_temperature_high = target_temp_high
         # self._target_temperature_low = target_temp_low
 
-        self._on = True if data['status'] is 'On' else False
+
 
 
     def update(self):
@@ -138,7 +149,7 @@ class MitsubishiClimate(ClimateDevice):
               self._target_temperature = data['set_temperature']
               self._current_temperature = data['room_temperature']
               self._current_fan_mode = data['fan_speed']
-              self._current_operation =  data['mode']
+              self._current_operation =  data['mode'] if data['status'] is 'On' else 'off'
               self._on = True if data['status'] is 'On' else False
         except KeyError:
            _LOGGER.warning("HA requested an update from HVAC %s but no data was received", self._api.netif)
@@ -262,12 +273,12 @@ class MitsubishiClimate(ClimateDevice):
 
     def set_operation_mode(self, operation_mode):
         """Set new operation mode."""
-        # if operation_mode == 'Off':
-        #     self.turn_off()
-        #  else:
-        #    if self._on == False:
-        #        self.turn_on()
-        self._api.setMode(operation_mode)
+        if operation_mode == 'off':
+           self.turn_off()
+        else:
+           if self._on == False:
+              self.turn_on()
+              self._api.setMode(operation_mode)
         self._current_operation = operation_mode
         self.schedule_update_ha_state()
 
