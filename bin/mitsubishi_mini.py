@@ -14,24 +14,24 @@ INFC_RES =		0x7A
 SETGET_RES =	0x7E
 
 MODES = {
-	'Auto':		0x41,
-	'Cool':  	0x42,
-	'Heat':  	0x43,
-	'Dehumidification': 0x44,
-	'Fan':	    0x45,
+	'auto':		0x41,
+	'cool':  	0x42,
+	'heat':  	0x43,
+	'dehumidification': 0x44,
+	'fan':	    0x45,
 	'Other': 	0x40
 }
 
 FAN_SPEED = {
-	'Automatic':	0x41,
-	'Minimum':  	0x31,
-	'Low':  		0x32,
-	'Medium-Low': 	0x33,
-	'Medium':		0x34,
-	'Medium-High': 	0x35,
-	'High':			0x36,
-	'Very High':    0x37,
-	'Max':			0x38
+	'automatic':	0x41,
+	'minimum':  	0x31,
+	'low':  		0x32,
+	'medium-low': 	0x33,
+	'medium':		0x34,
+	'medium-high': 	0x35,
+	'high':			0x36,
+	'very-high':    0x37,
+	'max':			0x38
 }
 
 ESV_CODES = {
@@ -93,15 +93,15 @@ class Function:
     def _0130A0(edt):
         op_mode = int.from_bytes(edt, 'big')
         values = {
-           0x41: 'Automatic',
-           0x31: 'Minimum',
-           0x32: 'Low',
-           0x33: 'Medium-Low',
-           0x34: 'Medium',
-           0x35: 'Medium-High',
-           0x36: 'High',
-           0x37: 'Very High',
-           0x38: 'Max'
+           0x41: 'auto',
+           0x31: 'minimum',
+           0x32: 'low',
+           0x33: 'medium-low',
+           0x34: 'medium',
+           0x35: 'medium-high',
+           0x36: 'high',
+           0x37: 'very-high',
+           0x38: 'max'
         }
         return {'fan_speed': values.get(op_mode, "Invalid setting")}
 
@@ -122,12 +122,12 @@ class Function:
     def _0130B0(edt):
         op_mode = int.from_bytes(edt, 'big')
         values = {
-           0x41: 'Auto',
-           0x42: 'Cool',
-           0x43: 'Heat',
-           0x44: 'Dehumidification',
-           0x45: 'Fan',
-           0x40: 'Other'
+           0x41: 'auto',
+           0x42: 'cool',
+           0x43: 'heat',
+           0x44: 'dehumidification',
+           0x45: 'fan',
+           0x40: 'other'
         }
         return {'mode': values.get(op_mode, "Invalid setting" )}
 
@@ -548,9 +548,9 @@ class MitsubishiClimate(ClimateDevice):
         self._current_operation = data['mode']
 
         #self._fan_list = ['On Low', 'On High', 'Auto Low', 'Auto High', 'Off']
-        self._fan_list = ['Low', 'Medium-High']
-        self._operation_list = ['Heat', 'Cool', 'Fan', 'Dehumidification', 'Auto']
-        self._swing_list = ['Auto', '1', '2', '3', 'Off']
+        self._fan_list = ['low', 'medium-high']
+        self._operation_list = ['heat', 'cool', 'fan', 'dehumidification', 'auto']
+        self._swing_list = ['auto', '1', '2', '3', 'off']
 
         self._on = True if data['status'] is 'On' else False
 
