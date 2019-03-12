@@ -26,13 +26,14 @@ pip install mitsubishi_echonet
 ### Discover a list of HVAC using:
 ```python
 aircons = mit.discover('Home air conditioner')
+aircon = aircons[0]
 ```
 
 ### Turn HVAC on or off:
 ```python
 aircon.on()
 aircon.off()
-aircon.status()
+aircon.getOperationalStatus()
 {'status': 'Off'}
 ```
 
