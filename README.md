@@ -73,8 +73,8 @@ There are two files under /bin
 'example.py' is an executable Python3 script that will discover your
 Mitsubishi HVAC and play with some settings.
 
-'mitsubishi.py' is for use with Home Assistant.
-Copy it into your 'custom_components'
+'/custom_components/mitsubishi/climate.py' is for use with Home Assistant (v0.89+)
+Copy the '/mitsubishi/climate.py' (including folder) into your 'custom_components'
 
 In configuration.yaml add the following lines:
 ```yaml
@@ -93,7 +93,7 @@ However, there is a workaround:
 1. Clone the repo
 2. Copy the 'mitsubishi_echonet' subfolder directly out of the repo and
 into the 'custom_components' directory.
-3. Flip the comments on the following lines in mitsubishi.py:
+3. Flip the comments on the following lines in climate.py:
 ```
 import mitsubishi_echonet as mit
 # import custom_components.mitsubishi_echonet as mit

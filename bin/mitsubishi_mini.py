@@ -1,5 +1,7 @@
 """
-Minified version of mitsubishi.py with ECHONET API built in.
+Minified (and legacy deprectaed) version of mitsubishi.py with ECHONET API built in.
+Probably only now works with Home assistant v0.88 or below.
+I wont be maintaining this moving forward.
 
 """
 GETC = 			0x60
@@ -549,7 +551,7 @@ class MitsubishiClimate(ClimateDevice):
 
         #self._fan_list = ['On Low', 'On High', 'Auto Low', 'Auto High', 'Off']
         self._fan_list = ['low', 'medium-high']
-        self._operation_list = ['heat', 'cool', 'fan_only', 'auto']
+        self._operation_list = ['heat', 'cool', 'fan_only', 'auto', 'off']
         self._swing_list = ['auto', '1', '2', '3', 'off']
 
         self._on = True if data['status'] is 'On' else False
@@ -641,7 +643,12 @@ class MitsubishiClimate(ClimateDevice):
 
     def set_operation_mode(self, operation_mode):
         """Set new operation mode."""
-        self._api.setMode(operation_mode)
+        if operation_mode == 'off':
+           self.turn_off()
+        else:
+           if self._on == False:
+              self.turn_on()
+           self._api.setMode(operation_mode)
         self._current_operation = operation_mode
         self.schedule_update_ha_state()
 
