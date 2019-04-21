@@ -3,3 +3,4 @@
 build/*
 dist/*
 mitsubishi_echonet.egg-info/*
+.DS_Store
