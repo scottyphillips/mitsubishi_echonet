@@ -19,7 +19,7 @@ import logging
 
 from homeassistant.components.climate import ClimateDevice
 from homeassistant.components.climate.const import (
-    ATTR_TARGET_TEMP_HIGH, ATTR_TARGET_TEMP_LOW,
+    ATTR_TARGET_TEMP_HIGH, ATTR_TARGET_TEMP_LOW, ATTR_FAN_LIST,
     SUPPORT_TARGET_TEMPERATURE, SUPPORT_TARGET_HUMIDITY,
     SUPPORT_TARGET_HUMIDITY_LOW, SUPPORT_TARGET_HUMIDITY_HIGH,
     SUPPORT_AWAY_MODE, SUPPORT_HOLD_MODE, SUPPORT_FAN_MODE,
@@ -52,15 +52,14 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
     else:
         entities.append(MitsubishiClimate(config.get(CONF_NAME),
            mit.HomeAirConditioner(config.get(CONF_IP_ADDRESS)),
-           TEMP_CELSIUS))
+           TEMP_CELSIUS, config.get(ATTR_FAN_LIST)))
     add_entities(entities)
 
 
 class MitsubishiClimate(ClimateDevice):
 
     """Representation of a Mitsubishi ECHONET climate device."""
-
-    def __init__(self, name, echonet_hvac, unit_of_measurement):
+    def __init__(self, name, echonet_hvac, unit_of_measurement, fan_list=None):
 
         """Initialize the climate device."""
         self._name = name
@@ -129,18 +128,15 @@ class MitsubishiClimate(ClimateDevice):
         # self._hold = hold
         # self._aux = aux
 
-
-
-        #self._fan_list = ['On Low', 'On High', 'Auto Low', 'Auto High', 'Off']
-        self._fan_list = ['low', 'medium-high']
+        if fan_list is not None:
+            self._fan_list = fan_list
+        else:
+            self._fan_list = ['low', 'medium-high']
         self._operation_list = ['heat', 'cool', 'fan_only', 'auto', 'off']
         self._swing_list = ['auto', '1', '2', '3', 'off']
 
         # self._target_temperature_high = target_temp_high
         # self._target_temperature_low = target_temp_low
-
-
-
 
     def update(self):
         """Get the latest state from the HVAC."""

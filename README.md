@@ -82,6 +82,27 @@ climate:
   - platform: mitsubishi
     ip_address: 1.2.3.4
 ```
+## Fine tuning fan settings.
+Optionally, you can also specify what fan settings work with your specific
+HVAC system. If no fan speeds are configured, the system will default to 'low'
+and 'medium-high'. Just delete the ones you dont need. 
+
+```yaml
+climate:
+  - platform: mitsubishi
+    ip_address: 192.168.1.6
+    name: "mitsubishi_ducted"
+    fan_list:
+      - 'minimum',
+      - 'low',
+      - 'medium-low'
+      - 'medium'
+      - 'medium-high'
+      - 'high'
+      - 'very High'
+      - 'max'
+```
+
 ## Help! Home Assistant could not run the module?
 
 When I was playing around with this I had difficulty getting hass.io to install
