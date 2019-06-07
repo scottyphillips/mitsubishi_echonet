@@ -8,3 +8,4 @@ v0.1.8, 08 Dec 2018 -- Made the library a bit more tolerant of communication iss
 v0.1.8.1, 08 Dec 2018 -- Bug fix that causes the library to fail
 v0.1.9, 20 Dec 2018 -- Minor Compatibility improvements with Home Assistant so it works with the HomeKit Integration
 v0.1.9.1, 20 Dec 2018 -- Aligned the fan mode to 'fan_only' for Lovelace compatibility
+v0.2, 07 June 2019 -- Fixed bug when setting fan modes 'medium-low' and 'medium-high'
