@@ -85,7 +85,7 @@ climate:
 ## Fine tuning fan settings.
 Optionally, you can also specify what fan settings work with your specific
 HVAC system. If no fan speeds are configured, the system will default to 'low'
-and 'medium-high'. Just delete the ones you dont need. 
+and 'medium-high'. Just delete the ones you dont need.
 
 ```yaml
 climate:
@@ -93,8 +93,8 @@ climate:
     ip_address: 192.168.1.6
     name: "mitsubishi_ducted"
     fan_list:
-      - 'minimum',
-      - 'low',
+      - 'minimum'
+      - 'low'
       - 'medium-low'
       - 'medium'
       - 'medium-high'
