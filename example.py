@@ -15,8 +15,4 @@ for aircon in aircons:
 
    print("Getting current operational parameters")
    print(aircon.update())
-
-   aircon.setFanSpeed('low')
-   aircon.setFanSpeed('medium')
-   aircon.setFanSpeed("medium-low")
-   aircon.setFanSpeed('auto')
+   aircon.setFanSpeed('medium-low')
