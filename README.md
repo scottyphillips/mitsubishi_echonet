@@ -99,7 +99,7 @@ climate:
       - 'medium'
       - 'medium-high'
       - 'high'
-      - 'very High'
+      - 'very-high'
       - 'max'
 ```
 
