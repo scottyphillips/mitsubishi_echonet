@@ -73,7 +73,7 @@ class Function:
            0x34: 'medium',
            0x35: 'medium-high',
            0x36: 'high',
-           0x37: 'very High',
+           0x37: 'very-high',
            0x38: 'max'
         }
         return {'fan_speed': values.get(op_mode, "Invalid setting")}

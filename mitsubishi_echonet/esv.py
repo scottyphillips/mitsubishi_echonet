@@ -28,14 +28,14 @@ MODES = {
 }
 
 FAN_SPEED = {
-	'auto':	0x41,
+	'auto':	        0x41,
 	'minimum':  	0x31,
 	'low':  		0x32,
-	'medium-Low': 	0x33,
+	'medium-low': 	0x33,
 	'medium':		0x34,
-	'medium-High': 	0x35,
+	'medium-high': 	0x35,
 	'high':			0x36,
-	'very High':    0x37,
+	'very-high':    0x37,
 	'max':			0x38
 }
 
