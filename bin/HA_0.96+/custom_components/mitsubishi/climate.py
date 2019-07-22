@@ -1,43 +1,44 @@
 """
 Mitsubishi platform to control HVAC using MAC-568IF-E Interface over ECHONET-lite
-Protocol
+Protocol.
+
+Use this custom component for HA 0.96 and above
+There are probably a lot of methods in here now that are obsolete with the
+revised Climate class in HA 0.96
+
+See https://github.com/home-assistant/home-assistant/pull/23899 for more details
 
 Uses mitsubishi_echonet python Library for API calls.
 The library should download automatically and it should download to config/deps
-but it didnt seem to work for ages so you may need to restart appliance a few times.
 
 As a last resort if the automatic pip install doesnt work:
 1. Download the GIT repo
 2. Copy the 'misubishi-echonet' subfolder out of the repo and into 'custom_components
-3. Flip the comments on the following lines:
+3. Flip the comments on the following lines under setup_platform:
 import mitsubishi_echonet as mit
 # import custom_components.mitsubishi_echonet as mit
-
 """
 
+
 import logging
+_LOGGER = logging.getLogger(__name__)
 
 from homeassistant.components.climate import ClimateDevice
 from homeassistant.components.climate.const import (
-    ATTR_TARGET_TEMP_HIGH, ATTR_TARGET_TEMP_LOW, ATTR_FAN_LIST,
+    ATTR_TARGET_TEMP_HIGH, ATTR_TARGET_TEMP_LOW,
     SUPPORT_TARGET_TEMPERATURE, SUPPORT_TARGET_HUMIDITY,
-    SUPPORT_TARGET_HUMIDITY_LOW, SUPPORT_TARGET_HUMIDITY_HIGH,
-    SUPPORT_AWAY_MODE, SUPPORT_HOLD_MODE, SUPPORT_FAN_MODE,
-    SUPPORT_OPERATION_MODE, SUPPORT_SWING_MODE,
-    SUPPORT_TARGET_TEMPERATURE_HIGH, SUPPORT_TARGET_TEMPERATURE_LOW,
-    SUPPORT_ON_OFF)
+    SUPPORT_FAN_MODE, ATTR_FAN_MODES)
 from homeassistant.const import TEMP_CELSIUS, TEMP_FAHRENHEIT, ATTR_TEMPERATURE, CONF_HOST, CONF_IP_ADDRESS, CONF_NAME
 
 DOMAIN = "mitsubishi"
-REQUIREMENTS = ['mitsubishi_echonet==0.1.9.1']
+REQUIREMENTS = ['mitsubishi_echonet==0.2']
 SUPPORT_FLAGS = 0
 
-import mitsubishi_echonet as mit
-# import custom_components.mitsubishi_echonet as mit
-
-_LOGGER = logging.getLogger(__name__)
 
 def setup_platform(hass, config, add_entities, discovery_info=None):
+
+    import mitsubishi_echonet as mit
+    # import custom_components.mitsubishi_echonet as mit
 
     """Set up the Mitsubishi ECHONET climate devices."""
     entities = []
@@ -52,14 +53,15 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
     else:
         entities.append(MitsubishiClimate(config.get(CONF_NAME),
            mit.HomeAirConditioner(config.get(CONF_IP_ADDRESS)),
-           TEMP_CELSIUS, config.get(ATTR_FAN_LIST)))
+           TEMP_CELSIUS, config.get(ATTR_FAN_MODES)))
     add_entities(entities)
 
 
 class MitsubishiClimate(ClimateDevice):
 
     """Representation of a Mitsubishi ECHONET climate device."""
-    def __init__(self, name, echonet_hvac, unit_of_measurement, fan_list=None):
+
+    def __init__(self, name, echonet_hvac, unit_of_measurement, fan_modes=None):
 
         """Initialize the climate device."""
         self._name = name
@@ -67,29 +69,11 @@ class MitsubishiClimate(ClimateDevice):
         _LOGGER.debug("ECHONET lite HVAC %s component added to HA", self._api.netif)
         # _LOGGER.debug("Available get attributes are %s", self._api.fetchGetProperties())
 
-        # available_properties = self._api.fetchGetProperties()
-
         self._unit_of_measurement = unit_of_measurement
         self._support_flags = SUPPORT_FLAGS
-
-        self._support_flags = self._support_flags | SUPPORT_ON_OFF
-        self._support_flags = self._support_flags | SUPPORT_OPERATION_MODE
         self._support_flags = self._support_flags | SUPPORT_TARGET_TEMPERATURE
         self._support_flags = self._support_flags | SUPPORT_FAN_MODE
 
-        # if target_humidity is not None:
-        #    self._support_flags = \
-        #        self._support_flags | SUPPORT_TARGET_HUMIDITY
-
-        # if current_swing_mode is not None:
-        #    self._support_flags = self._support_flags | SUPPORT_SWING_MODE
-
-        # if target_temp_high is not None:
-        #   self._support_flags = \
-        #        self._support_flags | SUPPORT_TARGET_TEMPERATURE_HIGH
-        # if target_temp_low is not None:
-        #    self._support_flags = \
-        #        self._support_flags | SUPPORT_TARGET_TEMPERATURE_LOW
         try:
             data = self._api.update()
 
@@ -101,11 +85,11 @@ class MitsubishiClimate(ClimateDevice):
             self._on = True if data['status'] is 'On' else False
 
             # Mode and fan speed
-            self._current_fan_mode = data['fan_speed'] if 'fan_speed' in data else 'Medium-High'
+            self._fan_mode= data['fan_speed'] if 'fan_speed' in data else 'Medium-High'
             if data['status'] is 'On':
-                self._current_operation = data['mode'] if 'mode' in data else 'auto'
+                self._hvac_mode = data['mode'] if 'mode' in data else 'auto'
             else:
-                self._current_operation = 'off'
+                self._hvac_mode = 'off'
 
             self._current_humidity = data['current_humidity'] if 'current_humidity' in data else None
             self._target_humidity = data['target_humidity'] if 'target_humidity' in data else None
@@ -118,25 +102,19 @@ class MitsubishiClimate(ClimateDevice):
             self._current_temperature = 20
 
             # Mode and fan speed
-            self._current_fan_mode = 'medium-high'
-            self._current_operation = 'off'
+            self._fan_mode= 'medium-high'
+            self._hvac_mode = 'off'
 
             self._current_humidity = None
             self._target_humidity = None
 
-        # self._away = away
-        # self._hold = hold
-        # self._aux = aux
-
-        if fan_list is not None:
-            self._fan_list = fan_list
+        #self._fan_modes = ['On Low', 'On High', 'Auto Low', 'Auto High', 'Off']
+        if fan_modes is not None:
+            self._fan_modes = fan_modes
         else:
-            self._fan_list = ['low', 'medium-high']
-        self._operation_list = ['heat', 'cool', 'fan_only', 'auto', 'off']
+            self._fan_modes = ['low', 'medium-high']
+        self._hvac_modes = ['heat', 'cool', 'fan_only', 'auto', 'off']
         self._swing_list = ['auto', '1', '2', '3', 'off']
-
-        # self._target_temperature_high = target_temp_high
-        # self._target_temperature_low = target_temp_low
 
     def update(self):
         """Get the latest state from the HVAC."""
@@ -145,8 +123,8 @@ class MitsubishiClimate(ClimateDevice):
            if data is not False:
               self._target_temperature = data['set_temperature']
               self._current_temperature = data['room_temperature']
-              self._current_fan_mode = data['fan_speed']
-              self._current_operation =  data['mode'] if data['status'] is 'On' else 'off'
+              self._fan_mode= data['fan_speed']
+              self._hvac_mode =  data['mode'] if data['status'] is 'On' else 'off'
               self._on = True if data['status'] is 'On' else False
         except KeyError:
            _LOGGER.warning("HA requested an update from HVAC %s but no data was received", self._api.netif)
@@ -202,14 +180,14 @@ class MitsubishiClimate(ClimateDevice):
         return self._target_humidity
 
     @property
-    def current_operation(self):
+    def hvac_mode(self):
         """Return current operation ie. heat, cool, idle."""
-        return self._current_operation
+        return self._hvac_mode
 
     @property
-    def operation_list(self):
+    def hvac_modes(self):
         """Return the list of available operation modes."""
-        return self._operation_list
+        return self._hvac_modes
 
     @property
     def is_away_mode_on(self):
@@ -232,14 +210,14 @@ class MitsubishiClimate(ClimateDevice):
         return self._on
 
     @property
-    def current_fan_mode(self):
+    def fan_mode(self):
         """Return the fan setting."""
-        return self._current_fan_mode
+        return self._fan_mode
 
     @property
-    def fan_list(self):
+    def fan_modes(self):
         """Return the list of available fan modes."""
-        return self._fan_list
+        return self._fan_modes
 
     def set_temperature(self, **kwargs):
         """Set new target temperatures."""
@@ -265,10 +243,10 @@ class MitsubishiClimate(ClimateDevice):
     def set_fan_mode(self, fan_mode):
         """Set new target temperature."""
         self._api.setFanSpeed(fan_mode)
-        self._current_fan_mode = fan_mode
+        self._fan_mode= fan_mode
         self.schedule_update_ha_state()
 
-    def set_operation_mode(self, operation_mode):
+    def set_hvac_mode(self, operation_mode):
         """Set new operation mode."""
         if operation_mode == 'off':
            self.turn_off()
@@ -276,7 +254,7 @@ class MitsubishiClimate(ClimateDevice):
            if self._on == False:
               self.turn_on()
            self._api.setMode(operation_mode)
-        self._current_operation = operation_mode
+        self._hvac_mode = operation_mode
         self.schedule_update_ha_state()
 
     @property
