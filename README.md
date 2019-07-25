@@ -86,7 +86,7 @@ climate:
 Optionally, you can also specify what fan settings work with your specific
 HVAC system. If no fan speeds are configured, the system will default to 'low'
 and 'medium-high'. Just delete the ones you dont need.
-Note: if you are on 0.95 use ```fan_list``` not ```fan_modes```
+Note: if you are on HA 0.95 or lower use ```fan_list``` not ```fan_modes```
 
 ```yaml
 climate:
