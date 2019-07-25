@@ -124,9 +124,8 @@ Make sure you enable the ECHONET Lite service in the official Mitsubishi App.
 
 Comments and suggestions are welcome!
 
-Buy me a coffee!
-<a href='https://www.buymeacoffee.com/RgKWqyt'>
-<img src="https://bmc-cdn.nyc3.digitaloceanspaces.com/BMC-button-images/custom_images/orange_img.png" alt="Buy Me A Coffee" style="height: auto !important;width: auto !important;" ></a>
+
+<a href='https://www.buymeacoffee.com/RgKWqyt'>Buy me a coffee!</a>
 
 ## Thanks
 
