@@ -113,7 +113,7 @@ class MitsubishiClimate(ClimateDevice):
             self._fan_modes = fan_modes
         else:
             self._fan_modes = ['low', 'medium-high']
-        self._hvac_modes = ['heat', 'cool', 'fan_only', 'auto', 'off']
+        self._hvac_modes = ['heat', 'cool', 'dry', 'fan_only', 'auto', 'off']
         self._swing_list = ['auto', '1', '2', '3', 'off']
 
     def update(self):
