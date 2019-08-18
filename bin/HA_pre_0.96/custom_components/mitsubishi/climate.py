@@ -134,7 +134,7 @@ class MitsubishiClimate(ClimateDevice):
             self._fan_list = fan_list
         else:
             self._fan_list = ['low', 'medium-high']
-        self._operation_list = ['heat', 'cool', 'fan_only', 'auto', 'off']
+        self._operation_list = ['heat', 'cool', 'dry', 'fan_only', 'auto', 'off']
         self._swing_list = ['auto', '1', '2', '3', 'off']
 
         # self._target_temperature_high = target_temp_high
