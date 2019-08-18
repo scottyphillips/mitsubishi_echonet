@@ -4,5 +4,5 @@
   "documentation": "https://github.com/scottyphillips/mitsubishi_echonet",
   "dependencies": [],
   "codeowners": [],
-  "requirements": []
+  "requirements": ["mitsubishi_echonet==0.2.1"]
 }

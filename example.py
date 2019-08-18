@@ -12,7 +12,10 @@ for aircon in aircons:
    print("Airconditioner {} available properties:".format(aircon.netif))
    #print(aircon.netif)
    print(aircon.fetchGetProperties())
-
+   
+   aircon.on()
+   aircon.setMode('dry')
+   
    print("Getting current operational parameters")
    print(aircon.update())
    aircon.setFanSpeed('medium-low')

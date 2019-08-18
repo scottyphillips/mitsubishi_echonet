@@ -22,7 +22,7 @@ MODES = {
 	'auto':  	0x41,
 	'cool':  	0x42,
 	'heat':  	0x43,
-	'dry':          0x44,
+	'dry':  	0x44,
 	'fan_only':	0x45,
 	'other': 	0x40
 }

@@ -31,7 +31,7 @@ from homeassistant.components.climate.const import (
 from homeassistant.const import TEMP_CELSIUS, TEMP_FAHRENHEIT, ATTR_TEMPERATURE, CONF_HOST, CONF_IP_ADDRESS, CONF_NAME
 
 DOMAIN = "mitsubishi"
-REQUIREMENTS = ['mitsubishi_echonet==0.2']
+REQUIREMENTS = ['mitsubishi_echonet==0.2.1']
 SUPPORT_FLAGS = 0
 
 
