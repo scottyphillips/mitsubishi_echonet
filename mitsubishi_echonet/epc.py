@@ -1326,7 +1326,7 @@ EPC_SUPER = {
 	0x83: ('Identification number', None),
 	0x84: ('Measured instantaneous power consumption', None),
 	0x85: ('Measured cumulative power consumption', None),
-	0x86: ('Manufacturer’s fault code', None),
+	0x86: ('Manufacturers fault code', None),
 	0x87: ('Current limit setting', None),
 	0x88: ('Fault status', None),
 	0x89: ('Fault description', None),
