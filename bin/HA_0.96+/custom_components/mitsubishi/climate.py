@@ -42,8 +42,8 @@ SUPPORT_FLAGS = 0
 
 def setup_platform(hass, config, add_entities, discovery_info=None):
 
-    #import mitsubishi_echonet as mit
-    import custom_components.mitsubishi_echonet as mit
+    import mitsubishi_echonet as mit
+    #import custom_components.mitsubishi_echonet as mit
 
     """Set up the Mitsubishi ECHONET climate devices."""
     entities = []
