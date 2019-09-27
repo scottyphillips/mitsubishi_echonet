@@ -34,7 +34,7 @@ aircon = aircons[0]
 aircon.on()
 aircon.off()
 aircon.getOperationalStatus()
-{'status': 'Off'}
+{'status': 'off'}
 ```
 
 ### Set or Get a HVACs target temperature
@@ -46,7 +46,7 @@ aircon.getOperationalTemperature()
 
 ### Set or Get a HVACs mode of operation:
 ```python
-supported modes =  'auto', 'cool', 'heat', 'dehumidify', 'fan_only', 'other'
+supported modes =  'auto', 'cool', 'heat', 'dry', 'fan_only', 'other'
 
 aircon.setMode('cool')
 aircon.getMode()
@@ -65,7 +65,7 @@ aircon.getFanSpeed()
 ### Get HVAC attributes at once:
 ```python
 aircon.update()
-{'status': 'On', 'set_temperature': 25, 'fan_speed': 'Medium-High', 'room_temperature': 25, 'mode': 'Cooling'}
+{'status': 'On', 'set_temperature': 25, 'fan_speed': 'medium-high', 'room_temperature': 25, 'mode': 'cooling'}
 ```
 ## Using the library with Home Assistant
 

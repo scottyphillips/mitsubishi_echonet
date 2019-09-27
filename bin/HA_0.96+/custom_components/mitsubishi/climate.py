@@ -28,7 +28,7 @@ from homeassistant.components.climate.const import (
     ATTR_TARGET_TEMP_HIGH, ATTR_TARGET_TEMP_LOW,
     SUPPORT_TARGET_TEMPERATURE, SUPPORT_TARGET_HUMIDITY,
     SUPPORT_FAN_MODE, ATTR_FAN_MODES,
-    CURRENT_HVAC_OFF, CURRENT_HVAC_HEAT, CURRENT_HVAC_COOL, 
+    CURRENT_HVAC_OFF, CURRENT_HVAC_HEAT, CURRENT_HVAC_COOL,
     CURRENT_HVAC_DRY, CURRENT_HVAC_IDLE, CURRENT_HVAC_FAN,
     HVAC_MODE_OFF, HVAC_MODE_HEAT, HVAC_MODE_COOL,
     HVAC_MODE_HEAT_COOL, HVAC_MODE_AUTO, HVAC_MODE_DRY,
@@ -192,7 +192,7 @@ class MitsubishiClimate(ClimateDevice):
     @property
     def hvac_action(self):
         """Return current operation ie. heat, cool, idle."""
-        if self._hvac_mode == HVAC_MODE_HEAT:  
+        if self._hvac_mode == HVAC_MODE_HEAT:
            return CURRENT_HVAC_HEAT
         if self._hvac_mode == HVAC_MODE_COOL:
            return CURRENT_HVAC_COOL
@@ -202,8 +202,11 @@ class MitsubishiClimate(ClimateDevice):
            return CURRENT_HVAC_FAN
         if self._hvac_mode == HVAC_MODE_AUTO:
            """ TODO : distinguish auto activity"""
-           return CURRENT_HVAC_HEAT
-
+           if self._target_temperature < self._current_temperature:
+               return CURRENT_HVAC_COOL
+           if self._target_temperature > self._current_temperature:
+               return CURRENT_HVAC_HEAT
+           return CURRENT_HVAC_IDLE
         return CURRENT_HVAC_OFF
 
     @property
