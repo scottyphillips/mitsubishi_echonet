@@ -1,5 +1,11 @@
 # Mitsubishi Echonet
 
+[![GitHub Release][releases-shield]][releases]
+[![License][license-shield]](LICENSE)
+![Project Maintenance][maintenance-shield]
+[![BuyMeCoffee][buymecoffeebadge]][buymecoffee]
+
+
 A library for interfacing with Mitsubishi HVAC with the ECHONET-lite protocol
 over WiFi adaptors such as the MAC-568IF-E.
 
@@ -94,3 +100,12 @@ the basis of my reverse engineering efforts.
 ## License
 
 This application is licensed under an MIT license, refer to LICENSE for details.
+
+***
+[mitsubishi_echonet]: https://github.com/scottyphillips/mitsubishi_echonet
+[releases-shield]: https://img.shields.io/github/release/scottyphillips/mitsubishi_echonet.svg?style=for-the-badge
+[releases]: https://github.com/scottyphillips/mitsubishi_echonet/releases
+[license-shield]:https://img.shields.io/github/license/scottyphillips/mitsubishi_echonet?style=for-the-badge
+[buymecoffee]: https://www.buymeacoffee.com/RgKWqyt?style=for-the-badge
+[buymecoffeebadge]: https://img.shields.io/badge/buy%20me%20a%20coffee-donate-yellow.svg?style=for-the-badge
+[maintenance-shield]: https://img.shields.io/badge/Maintainer-Scott%20Phillips-blue?style=for-the-badge
