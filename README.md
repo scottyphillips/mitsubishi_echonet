@@ -67,65 +67,16 @@ aircon.getFanSpeed()
 aircon.update()
 {'status': 'On', 'set_temperature': 25, 'fan_speed': 'medium-high', 'room_temperature': 25, 'mode': 'cooling'}
 ```
-## Using the library with Home Assistant
+## Using this library with Home Assistant
 
-There are two files under /bin
-'example.py' is an executable Python3 script that will discover your
-Mitsubishi HVAC and play with some settings.
+NOTE: There is now a dedicated repo for the related Home Assistant
+'Mitsubishi' custom component that makes use of this Python library.
+(https://github.com/scottyphillips/mitsubishi_hass)
+The custom component examples as mentioned below are now deprecated and
+will be removed from this repo at a later date.
 
-'/custom_components/mitsubishi/climate.py' is for use with Home Assistant (v0.89+)
-Copy the '/mitsubishi/climate.py' (including folder) into your 'custom_components'
-
-In configuration.yaml add the following lines:
-```yaml
-climate:
-  - platform: mitsubishi
-    ip_address: 1.2.3.4
-```
-## Fine tuning fan settings.
-Optionally, you can also specify what fan settings work with your specific
-HVAC system. If no fan speeds are configured, the system will default to 'low'
-and 'medium-high'. Just delete the ones you dont need.
-Note: if you are on HA 0.95 or lower use ```fan_list``` not ```fan_modes```
-
-```yaml
-climate:
-  - platform: mitsubishi
-    ip_address: 192.168.1.6
-    name: "mitsubishi_ducted"
-    fan_modes:
-      - 'minimum'
-      - 'low'
-      - 'medium-low'
-      - 'medium'
-      - 'medium-high'
-      - 'high'
-      - 'very-high'
-      - 'max'
-```
-
-## Help! Home Assistant could not run the module?
-
-When I was playing around with this I had difficulty getting hass.io to install
-the library from pip. No idea why, but eventually I found the correct
-combination to get it to work as it is supposed to.
-
-However, there is a workaround:
-
-1. Clone the repo
-2. Copy the 'mitsubishi_echonet' subfolder directly out of the repo and
-into the 'custom_components' directory.
-3. Flip the comments on the following lines in climate.py:
-```
-import mitsubishi_echonet as mit
-# import custom_components.mitsubishi_echonet as mit
-```
-Make sure you enable the ECHONET Lite service in the official Mitsubishi App.
-
-Comments and suggestions are welcome!
-
-
-<a href='https://www.buymeacoffee.com/RgKWqyt'>Buy me a coffee!</a>
+'example.py' in the /bin directory gives you an idea how to drive the
+HVAC directly from Python using this library.
 
 ## Thanks
 
