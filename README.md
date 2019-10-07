@@ -69,11 +69,11 @@ aircon.update()
 ```
 ## Using this library with Home Assistant
 
-NOTE: There is now a dedicated repo for the related Home Assistant
-'Mitsubishi' custom component that makes use of this Python library.
+NOTE: For Home Assistant users there is now a dedicated repo for the related Home Assistant 'Mitsubishi' custom component that makes use of this Python library:
 (https://github.com/scottyphillips/mitsubishi_hass)
-The custom component examples as mentioned below are now deprecated and
-will be removed from this repo at a later date.
+
+The custom component examples in the /bin directory will be removed from this
+repo at a later release and this repo will focus solely on the Python library.
 
 'example.py' in the /bin directory gives you an idea how to drive the
 HVAC directly from Python using this library.
