@@ -324,8 +324,12 @@ class EchoNetNode:
         }
         message = buildEchonetMsg(tx_payload)
         data = sendMessage(message, self.netif);
-        rx = decodeEchonetMsg(data[0]['payload'])
-
+        ## some index issue here sometimes
+        try:
+           rx = decodeEchonetMsg(data[0]['payload'])
+        # if no data is returned ignore the IndexError and return false
+        except IndexError:
+           return False
         rx_epc = rx['OPC'][0]['EPC']
         rx_pdc = rx['OPC'][0]['PDC']
         if rx_epc == tx_epc and rx_pdc == 0x00:
