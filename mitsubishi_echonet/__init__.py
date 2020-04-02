@@ -398,6 +398,7 @@ class HomeAirConditioner(EchoNetNode):
         self.propertyMaps = getAllPropertyMaps(self.netif, self.eojgc, self.eojcc , self.instance)
         self.setTemperature = None
         self.roomTemperature = None
+        self.outdoorTemperature = None
         self.mode = False
         self.fan_speed = None
         self.JSON = {}
@@ -497,3 +498,12 @@ class HomeAirConditioner(EchoNetNode):
             return True
         else:
             return False
+
+    """
+    GetOutdoorTemperature get the temperature that has been set in the HVAC
+
+    return: A string representing the configured temperature.
+    """
+    def getOutdoorTemperature(self):
+        self.outdoorTemperature = self.getMessage(0xBE)['outdoor_temperature']
+        return self.outdoorTemperature

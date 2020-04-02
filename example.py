@@ -16,9 +16,12 @@ for aircon in aircons:
    print("Airconditioner {} available Set properties:".format(aircon.netif))
    print(aircon.fetchSetProperties())
 
-   aircon.on()
-   aircon.setMode('dry')
+   # aircon.on()
+   # aircon.setMode('dry')
 
    print("Getting current operational parameters")
    print(aircon.update())
-   aircon.setFanSpeed('medium-low')
+   # aircon.setFanSpeed('medium-low')
+
+   print("Getting outdoor temperature")
+   print(aircon.getOutdoorTemperature())

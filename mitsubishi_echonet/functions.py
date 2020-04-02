@@ -62,6 +62,10 @@ class Function:
     def _0130BB(edt):
         return {'room_temperature': int.from_bytes(edt, 'big')}
 
+    # Check status of Outdoor Temperature
+    def _0130BE(edt):
+        return {'outdoor_temperature': int.from_bytes(edt, 'big')}
+
     # Check status of Fan speed
     def _0130A0(edt):
         op_mode = int.from_bytes(edt, 'big')

@@ -285,7 +285,7 @@ EPC_CODE = {
 				0xBB: ('Measured value of room temperature', f._0130BB),
 				0xBC: ('Set temperature value of user remote control', None),
 				0xBD: ('Measured cooled air temperature', None),
-				0xBE: ('Measured outdoor air temperature', None),
+				0xBE: ('Measured outdoor air temperature', f._0130BE),
 				0xBF: ('Relative temperature setting', None),
 				0xA0: ('Air flow rate setting', f._0130A0),
 				0xA1: ('Automatic control of air flow direction setting', None),
