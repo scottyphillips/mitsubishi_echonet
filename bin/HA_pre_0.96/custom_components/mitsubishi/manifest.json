@@ -1,8 +1,0 @@
-{
-  "domain": "mitsubishi",
-  "name": "Mitsubishi HVAC with Echonet lite",
-  "documentation": "https://github.com/scottyphillips/mitsubishi_echonet",
-  "dependencies": [],
-  "codeowners": [],
-  "requirements": []
-}
