@@ -1,20 +1,4 @@
-from .functions import Function as f
-# ------------------------------------------------------------------
-# EHD1: ECHONET Lite Header 1
-# ---------------------------------------------------------------- */
-EHD1 = {
- 0x00: 'Not available',
- 0x10: 'Conventional ECHONET Lite Specification'
-}
-
-# ------------------------------------------------------------------
-# EHD1: ECHONET Lite Header 2
-# ---------------------------------------------------------------- */
-EHD2 = {
-	0x81: 'Format 1 (specified message format)',
-	0x82: 'Format 2 (arbitrary message format)'
-}
-
+from .opcodes import _FF, _0E, _01
 # ------------------------------------------------------------------
 # EPC set
 # ---------------------------------------------------------------- */
@@ -269,12 +253,12 @@ EPC_CODE = {
 		0x30: { # Home air conditioner class
 			"class": 'HomeAirConditioner',
 			"functions": {
-				0x80: ('Operation status', f._013080),
+				0x80: ('Operation status', _01._3080),
 				0x8F: ('Operation power-saving', None),
-				0xB0: ('Operation mode setting', f._0130B0 ),
+				0xB0: ('Operation mode setting', _01._30B0),
 				0xB1: ('Automatic temperature control setting', None),
 				0xB2: ('Normal/high-speed/silent operation setting', None),
-				0xB3: ('Set temperature value', f._0130B3),
+				0xB3: ('Set temperature value', _01._30B3),
 				0xB4: ('Set value of relative humidity in dehumidifying mode', None),
 				0xB5: ('Set temperature value in cooling mode', None),
 				0xB6: ('Set temperature value in heating mode', None),
@@ -282,17 +266,17 @@ EPC_CODE = {
 				0xB8: ('Rated power consumption', None),
 				0xB9: ('Measured value of current consumption', None),
 				0xBA: ('Measured value of room relative humidity', None),
-				0xBB: ('Measured value of room temperature', f._0130BB),
+				0xBB: ('Measured value of room temperature', _01._30BB),
 				0xBC: ('Set temperature value of user remote control', None),
 				0xBD: ('Measured cooled air temperature', None),
-				0xBE: ('Measured outdoor air temperature', f._0130BE),
+				0xBE: ('Measured outdoor air temperature', _01._30BE),
 				0xBF: ('Relative temperature setting', None),
-				0xA0: ('Air flow rate setting', f._0130A0),
+				0xA0: ('Air flow rate setting', _01._30A0),
 				0xA1: ('Automatic control of air flow direction setting', None),
 				0xA3: ('Automatic swing of air flow setting', None),
 				0xA4: ('Air flow direction (vertical) setting', None),
 				0xA5: ('Air flow direction (horizontal) setting', None),
-				0xAA: ('Special state', f._0130AA),
+				0xAA: ('Special state', _01._30AA),
 				0xAB: ('Non-priority state', None),
 				0xC0: ('Ventilation function setting', None),
 				0xC1: ('Humidifier function setting', None),
@@ -1301,7 +1285,7 @@ EPC_CODE = {
 			0xD3: ('Number of self-node instances'),
 			0xD4: ('Number of self-node classes'),
 			0xD5: ('Instance list notification'),
-			0xD6: ('Self-node instance list S', f._0EF0D6),
+			0xD6: ('Self-node instance list S', _0E._F0D6),
 			0xD7: ('Self-node class list S'),
 			# Super Class of the Profile class group
 			0x88: 'Fault status',
@@ -1321,8 +1305,8 @@ EPC_CODE = {
 
 EPC_SUPER = {
 	0x80: ('Operation status', None),
-	0x81: ('Installation location', f._FF0081),
-	0x82: ('Standard version information', f._FF0082),
+	0x81: ('Installation location', _FF._0081),
+	0x82: ('Standard version information', _FF._0082),
 	0x83: ('Identification number', None),
 	0x84: ('Measured instantaneous power consumption', None),
 	0x85: ('Measured cumulative power consumption', None),
@@ -1330,7 +1314,7 @@ EPC_SUPER = {
 	0x87: ('Current limit setting', None),
 	0x88: ('Fault status', None),
 	0x89: ('Fault description', None),
-	0x8A: ('Manufacturer code', f._FF008A),
+	0x8A: ('Manufacturer code', "_FF008A"),
 	0x8B: ('Business facility code', None),
 	0x8C: ('Product code', None),
 	0x8D: ('Production number', None),
@@ -1344,6 +1328,6 @@ EPC_SUPER = {
 	0x9B: ('SetM property map', None),
 	0x9C: ('GetM property map', None),
 	0x9D: ('Status change announcement property map', None),
-	0x9E: ('Set property map', f._FF009E),
-	0x9F: ('Get property map', f._FF009F)
+	0x9E: ('Set property map', _FF._009E),
+	0x9F: ('Get property map', _FF._009F)
 }
