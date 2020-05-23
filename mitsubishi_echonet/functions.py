@@ -106,7 +106,7 @@ def buildEchonetMsg(data):
 decodeEchonetMsg is used to build an ECHONET-LITE control message in the form
 of a byte string
 
-param bytes: A string representing the hexadecimal control message in ECHONET LITE
+param bytes: A bytestring representing the hexadecimal control message in ECHONET LITE
 return: a dict representing the deconstructed ECHONET packet
 """
 def decodeEchonetMsg(byte):
