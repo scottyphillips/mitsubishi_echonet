@@ -197,6 +197,7 @@ def sendMessage(message, ip_address):
             except socket.timeout:
                 break
             else:
+                print(payload)
                 # Received a packet.
                 data.append({'server':server,'payload':payload})
     finally:
