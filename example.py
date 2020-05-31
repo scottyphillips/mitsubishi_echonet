@@ -6,15 +6,15 @@ aircons = False
 # Discover HVAC Echonet objects
 while aircons == False:
     print("Discovering Anything..")
-    aircons = mit.discover()
+    echonet_objects = mit.discover()
 
-for aircon in aircons:
-   print("ECHONET {} available Get properties:".format(aircon.netif))
+for node in echonet_objects:
+   print("ECHONET node {} available Get properties:".format(aircon.netif))
    #print(aircon.netif)
-   print(aircon.fetchGetProperties())
+   print(node.fetchGetProperties())
 
-   print("ECHONET {} available Set properties:".format(aircon.netif))
-   print(aircon.fetchSetProperties())
+   print("ECHONET node {} available Set properties:".format(aircon.netif))
+   print(node.fetchSetProperties())
 
    # aircon.on()
    # aircon.setMode('dry')
