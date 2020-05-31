@@ -5,23 +5,23 @@ import time
 aircons = False
 # Discover HVAC Echonet objects
 while aircons == False:
-    print("Discovering Air Conditioners..")
-    aircons = mit.discover('Home air conditioner')
+    print("Discovering Anything..")
+    aircons = mit.discover()
 
 for aircon in aircons:
-   print("Airconditioner {} available Get properties:".format(aircon.netif))
+   print("ECHONET {} available Get properties:".format(aircon.netif))
    #print(aircon.netif)
    print(aircon.fetchGetProperties())
 
-   print("Airconditioner {} available Set properties:".format(aircon.netif))
+   print("ECHONET {} available Set properties:".format(aircon.netif))
    print(aircon.fetchSetProperties())
 
    # aircon.on()
    # aircon.setMode('dry')
 
-   print("Getting current operational parameters")
-   print(aircon.update())
+   # print("Getting current operational parameters")
+   # print(aircon.update())
    # aircon.setFanSpeed('medium-low')
 
-   print("Getting outdoor temperature")
-   print(aircon.getOutdoorTemperature())
+   # print("Getting outdoor temperature")
+   # print(aircon.getOutdoorTemperature())
