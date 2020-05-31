@@ -2,9 +2,9 @@
 import mitsubishi_echonet as mit
 import time
 
-aircons = False
+echonet_objects = False
 # Discover HVAC Echonet objects
-while aircons == False:
+while echonet_objects == False:
     print("Discovering Anything..")
     echonet_objects = mit.discover()
 
