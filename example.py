@@ -9,11 +9,11 @@ while echonet_objects == False:
     echonet_objects = mit.discover()
 
 for node in echonet_objects:
-   print("ECHONET node {} available Get properties:".format(aircon.netif))
+   print("ECHONET node {} available Get properties:".format(node.netif))
    #print(aircon.netif)
    print(node.fetchGetProperties())
 
-   print("ECHONET node {} available Set properties:".format(aircon.netif))
+   print("ECHONET node {} available Set properties:".format(node.netif))
    print(node.fetchSetProperties())
 
    # aircon.on()
