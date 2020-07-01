@@ -317,6 +317,9 @@ class EchoNetNode:
     """
     def setMessage(self, tx_epc, tx_edt):
         self.last_transaction_id += 1
+        # fix for rollover of transaction ID which was causing home assistant to crash
+        if self.last_transaction_id == 0xFFFF:
+            self.last_transaction_id == 0
         tx_payload = {
         'TID' : self.last_transaction_id,
         'DEOJGC': self.eojgc ,
