@@ -82,10 +82,76 @@ class Function:
         }
         return {'fan_speed': values.get(op_mode, "Invalid setting")}
 
+    # Automatic control of air flow direction setting
+    def _0130A1(edt):
+        op_mode = int.from_bytes(edt, 'big')
+        values = {
+           0x41: 'auto',
+           0x42: 'non-auto',
+           0x43: 'auto-vert',
+           0x44: 'auto-horiz'
+        }
+        return {'auto_direction': values.get(op_mode, "Invalid setting")}
 
+    # Automatic swing of air flow direction setting
+    def _0130A3(edt):
+        op_mode = int.from_bytes(edt, 'big')
+        values = {
+           0x31: 'off',
+           0x41: 'vert',
+           0x42: 'horiz',
+           0x43: 'vert-horiz'
+        }
+        return {'swing_mode': values.get(op_mode, "Invalid setting")}
+
+    # Air flow direction (vertical) setting
+    def _0130A4(edt):
+        op_mode = int.from_bytes(edt, 'big')
+        values = {
+          0x41: 'upper',
+          0x44: 'upper-central',
+          0x43: 'central',
+          0x45: 'lower-central',
+          0x42: 'lower'
+          }
+        # return({'special':hex(op_mode)})
+        return {'airflow_vert': values.get(op_mode, "Invalid setting")}
+
+    # Air flow direction (horiziontal) setting
+    def _0130A5(edt):
+        # complies with version 2.01 Release a (page 3-88)
+        op_mode = int.from_bytes(edt, 'big')
+        values = {
+          0x41: 'rc-right',
+          0x42: 'left-lc',
+          0x43: 'lc-center-rc',
+          0x44: 'left-lc-rc-right',
+          0x51: 'right',
+          0x52: 'rc',
+          0x54: 'center',
+          0x55: 'center-right',
+          0x56: 'center-rc',
+          0x57: 'center-rc-right',
+          0x58: 'lc',
+          0x59: 'lc-right',
+          0x5A: 'lc-rc',
+          0x60: 'left',
+          0x61: 'left-right',
+          0x62: 'left-rc',
+          0x63: 'left-rc-right',
+          0x64: 'left-center',
+          0x65: 'left-center-right',
+          0x66: 'left-center-rc',
+          0x67: 'left-center-rc-right',
+          0x69: 'left-lc-right',
+          0x6A: 'left-lc-rc'
+          }
+        # return({'special':hex(op_mode)})
+        return {'airflow_horiz': values.get(op_mode, "Invalid setting")}
+
+    # Special state (0xAA)
     def _0130AA(edt):
         op_mode = int.from_bytes(edt, 'big')
-        print(hex(op_mode))
         values = {
           0x40: 'Normal operation',
           0x41: 'Defrosting',
@@ -94,6 +160,7 @@ class Function:
           }
         # return({'special':hex(op_mode)})
         return {'special_setting': values.get(op_mode, "Invalid setting")}
+
 
     # Operation mode
     def _0130B0(edt):
