@@ -22,7 +22,7 @@ for node in echonet_objects:
    print(node.getSwingMode())
 
    node.setSwingMode('vert')
-   # node.setSwingMode('off)
+   # node.setSwingMode('not-used')
 
    # node.setAirFlowVert('central')
 

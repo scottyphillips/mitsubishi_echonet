@@ -97,7 +97,7 @@ class Function:
     def _0130A3(edt):
         op_mode = int.from_bytes(edt, 'big')
         values = {
-           0x31: 'off',
+           0x31: 'not-used',
            0x41: 'vert',
            0x42: 'horiz',
            0x43: 'vert-horiz'
