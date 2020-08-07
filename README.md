@@ -68,6 +68,39 @@ aircon.setFanSpeed('medium-high')
 aircon.getFanSpeed()
 {'fan_speed': 'medium-high'}
 ```
+
+### Set or Get a HVACs swing mode:
+Useful for split systems
+Note - your HVAC may not support all swing modes.
+```python
+supported modes = 'not-used', 'vert', 'horiz', 'vert-horiz'
+
+aircon.setSwingMode('vert')
+aircon.getSwingMode()
+{'swing_mode': 'vert'}
+```
+
+### Set or Get a HVACs automatic direction mode:
+Useful for split systems
+Note - your HVAC may not support all modes.
+```python
+supported modes = 'auto', 'non-auto', 'auto-horiz', 'auto-vert'
+
+aircon.setAutoDirection('auto')
+aircon.getAutoDirection()
+{'auto_direction': 'auto'}
+```
+
+### Set or Get a HVACs vertical airflow direction:
+Useful for split systems
+Note - your HVAC may not support all modes.
+```python
+supported modes = 'upper', 'upper-central', 'central', 'lower-central', 'lower'
+
+aircon.setAirflowVert('central')
+aircon.getAirflowVert()
+{'airflow_vert': 'central'}
+
 ### Get HVAC attributes at once:
 ```python
 aircon.update()
