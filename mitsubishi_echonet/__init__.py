@@ -522,7 +522,7 @@ class HomeAirConditioner(EchoNetNode):
     setSwingMode sets the automatic swing mode function
 
     params swing_mode: A string representing automatic swing mode
-                       e.g: 'off', 'vert', 'horiz', 'vert-horiz'
+                       e.g: 'not-used', 'vert', 'horiz', 'vert-horiz'
     """
     def setSwingMode(self, swing_mode):
         if self.setMessage(0xA3, SWING_MODE[swing_mode]):
