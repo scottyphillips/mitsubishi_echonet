@@ -239,7 +239,7 @@ def getOpCode(ip_address, deojgc, deojcc, deojci, opc, tid=0x01):
             'ESV' : GET,
             'OPC' : opc
         }
-        # Build ECHONET discover messafge.
+        # Build ECHONET discover message.
         message = buildEchonetMsg(tx_payload)
         rx_data = sendMessage(message, ip_address)
         return_data = {}
@@ -428,8 +428,8 @@ class HomeAirConditioner(EchoNetNode):
                       0xB3, # Set temperature
                       0xA0, # fan speed
                       0xBB, # room temperature
-                      0xB0] # mode
-                      #0x8A] # manufactorers code
+                      0xB0, # mode
+                      0xA3] # swing mode
         opc = []
         self.last_transaction_id += 1
         for value in attributes:
@@ -443,6 +443,7 @@ class HomeAirConditioner(EchoNetNode):
             self.fan_speed = self.JSON['fan_speed']
             self.roomTemperature = self.JSON['room_temperature']
             self.status = self.JSON['status']
+            self.swing_mode = self.JSON['swing_mode']
         return returned_data
 
     """
@@ -579,10 +580,33 @@ class HomeAirConditioner(EchoNetNode):
             return False
 
     """
-    getAirflowVert get the direction mode that has been set in the HVAC
+    getAirflowVert get the vertical vane setting that has been set in the HVAC
 
     return: A string representing vertical airflow setting
     """
     def getAirflowVert(self):
         self.airflow_vert  = self.getMessage(0xA4)['airflow_vert']
         return self.airflow_vert
+
+    """
+    setAirflowHoriz sets the horizontal vane setting
+
+    params airflow_horiz: A string representing vertical airflow setting
+                         e.g: 'left', 'center', 'right'
+    """
+    def setAirflowHoriz (self, airflow_horiz):
+        if self.setMessage(0xA5, AIRFLOW_HORIZ[airflow_horiz]):
+            self.airflow_horiz = airflow_horiz
+            return True
+        else:
+            return False
+
+    """
+    getAirflowHoriz get the horizontal vane setting that has been set in the HVAC
+
+    return: A string representing vertical airflow setting e.g: 'left', 'center', 'right'
+    """
+    def getAirflowHoriz(self):
+        self.airflow_horiz  = self.getMessage(0xA5)['airflow_horiz']
+        return self.airflow_horiz
+		
