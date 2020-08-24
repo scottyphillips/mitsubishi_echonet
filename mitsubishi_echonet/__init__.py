@@ -591,8 +591,8 @@ class HomeAirConditioner(EchoNetNode):
     """
     setAirflowHoriz sets the horizontal vane setting
 
-    params airflow_horiz: A string representing vertical airflow setting
-                         e.g: 'left', 'center', 'right'
+    params airflow_horiz: A string representing horizontal airflow setting
+                         e.g: 'left', 'lc', 'center', 'rc', 'right'
     """
     def setAirflowHoriz (self, airflow_horiz):
         if self.setMessage(0xA5, AIRFLOW_HORIZ[airflow_horiz]):
@@ -604,7 +604,7 @@ class HomeAirConditioner(EchoNetNode):
     """
     getAirflowHoriz get the horizontal vane setting that has been set in the HVAC
 
-    return: A string representing vertical airflow setting e.g: 'left', 'center', 'right'
+    return: A string representing vertical airflow setting e.g: 'left', 'lc', 'center', 'rc', 'right'
     """
     def getAirflowHoriz(self):
         self.airflow_horiz  = self.getMessage(0xA5)['airflow_horiz']
