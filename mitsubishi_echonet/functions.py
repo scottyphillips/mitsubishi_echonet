@@ -64,7 +64,10 @@ class Function:
 
     # Check status of Outdoor Temperature
     def _0130BE(edt):
-        return {'outdoor_temperature': int.from_bytes(edt, 'big')}
+        val = int.from_bytes(edt, 'big')
+        if val == 126: 
+            val = None
+        return {'outdoor_temperature': val}
 
     # Check status of Fan speed
     def _0130A0(edt):
