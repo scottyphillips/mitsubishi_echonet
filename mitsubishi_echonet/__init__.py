@@ -429,7 +429,8 @@ class HomeAirConditioner(EchoNetNode):
                       0xA0, # fan speed
                       0xBB, # room temperature
                       0xB0, # mode
-                      0xA3] # swing mode
+                      0xA3, # swing mode
+                      0xBE] # outdoor temp
         opc = []
         self.last_transaction_id += 1
         for value in attributes:
@@ -444,6 +445,7 @@ class HomeAirConditioner(EchoNetNode):
             self.roomTemperature = self.JSON['room_temperature']
             self.status = self.JSON['status']
             self.swing_mode = self.JSON['swing_mode']
+            self.outdoorTemperature = self.JSON['outdoor_temperature']
         return returned_data
 
     """
