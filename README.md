@@ -68,6 +68,39 @@ aircon.setFanSpeed('medium-high')
 aircon.getFanSpeed()
 {'fan_speed': 'medium-high'}
 ```
+
+### Set or Get a HVACs swing mode:
+Useful for split systems
+Note - your HVAC may not support all swing modes.
+```python
+supported modes = 'not-used', 'vert', 'horiz', 'vert-horiz'
+
+aircon.setSwingMode('vert')
+aircon.getSwingMode()
+{'swing_mode': 'vert'}
+```
+
+### Set or Get a HVACs automatic direction mode:
+Useful for split systems
+Note - your HVAC may not support all modes.
+```python
+supported modes = 'auto', 'non-auto', 'auto-horiz', 'auto-vert'
+
+aircon.setAutoDirection('auto')
+aircon.getAutoDirection()
+{'auto_direction': 'auto'}
+```
+
+### Set or Get a HVACs vertical airflow direction:
+Useful for split systems
+Note - your HVAC may not support all modes.
+```python
+supported modes = 'upper', 'upper-central', 'central', 'lower-central', 'lower'
+
+aircon.setAirflowVert('central')
+aircon.getAirflowVert()
+{'airflow_vert': 'central'}
+
 ### Get HVAC attributes at once:
 ```python
 aircon.update()
@@ -78,13 +111,11 @@ aircon.update()
 NOTE: For Home Assistant users there is now a dedicated repo for the related Home Assistant 'Mitsubishi' custom component that makes use of this Python library:
 (https://github.com/scottyphillips/mitsubishi_hass)
 
-The custom component examples in the /bin directory will be removed from this
-repo at a later release and this repo will focus solely on the Python library.
-
-'example.py' in the /bin directory gives you an idea how to drive the
-HVAC directly from Python using this library.
+'example.py' gives you an idea how to drive the HVAC directly from Python using this library.
 
 ## Thanks
+
+Thanks to Karl Chaffey for contributing code updates for v0.4
 
 Thanks to Jeffro Carr who inspired me to write my own native Python ECHONET
 library for Home Assistant. I could not get his Node JS Docker container

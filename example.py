@@ -17,7 +17,14 @@ for node in echonet_objects:
    print(node.fetchSetProperties())
 
    # aircon.on()
-   # aircon.setMode('dry')
+   print(node.getAirflowVert())
+   print(node.getAutoDirection())
+   print(node.getSwingMode())
+
+   node.setSwingMode('vert')
+   # node.setSwingMode('not-used')
+
+   # node.setAirFlowVert('central')
 
    # print("Getting current operational parameters")
    # print(aircon.update())
