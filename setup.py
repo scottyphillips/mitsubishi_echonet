@@ -8,7 +8,7 @@ with open(path.join(this_directory, 'README.md')) as f:
 
 setup(
     name='mitsubishi_echonet',
-    version='0.4',
+    version='0.4.1',
     author='Scott Phillips',
     packages=['mitsubishi_echonet'],
     url='http://pypi.python.org/pypi/mitsubishi_echonet/',
