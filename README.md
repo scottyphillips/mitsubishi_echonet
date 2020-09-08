@@ -111,13 +111,11 @@ aircon.update()
 NOTE: For Home Assistant users there is now a dedicated repo for the related Home Assistant 'Mitsubishi' custom component that makes use of this Python library:
 (https://github.com/scottyphillips/mitsubishi_hass)
 
-The custom component examples in the /bin directory will be removed from this
-repo at a later release and this repo will focus solely on the Python library.
-
-'example.py' in the /bin directory gives you an idea how to drive the
-HVAC directly from Python using this library.
+'example.py' gives you an idea how to drive the HVAC directly from Python using this library.
 
 ## Thanks
+
+Thanks to Karl Chaffey for contributing code updates for v0.4
 
 Thanks to Jeffro Carr who inspired me to write my own native Python ECHONET
 library for Home Assistant. I could not get his Node JS Docker container

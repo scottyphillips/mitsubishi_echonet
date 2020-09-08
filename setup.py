@@ -10,7 +10,6 @@ setup(
     name='mitsubishi_echonet',
     version='0.4.0',
     author='Scott Phillips',
-    author_email='jrh@example.com',
     packages=['mitsubishi_echonet'],
     url='http://pypi.python.org/pypi/mitsubishi_echonet/',
     license='LICENSE.txt',
