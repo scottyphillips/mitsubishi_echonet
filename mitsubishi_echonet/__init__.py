@@ -444,7 +444,7 @@ class HomeAirConditioner(EchoNetNode):
             self.fan_speed = self.JSON['fan_speed']
             self.roomTemperature = self.JSON['room_temperature']
             self.status = self.JSON['status']
-            self.swing_mode = self.JSON['swing_mode']
+            self.swing_mode = self.JSON['swing_mode'] if 'swing_mode' in self.JSON.values() else None
             self.outdoorTemperature = self.JSON['outdoor_temperature']
         return returned_data
 
@@ -611,4 +611,3 @@ class HomeAirConditioner(EchoNetNode):
     def getAirflowHoriz(self):
         self.airflow_horiz  = self.getMessage(0xA5)['airflow_horiz']
         return self.airflow_horiz
-		
