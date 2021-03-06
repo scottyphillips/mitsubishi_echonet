@@ -49,6 +49,14 @@ class Function:
         # ops_value = int.from_bytes(edt, 'little')
         return {'version_info': None}
 
+    # Get the identification number of the node
+    def _FF0083(edt):
+        if edt[0] == 0xFE:
+            ops_value = edt[1:].hex()
+        else:
+            ops_value = None
+        return {'identification_number': ops_value}
+
     # Check standard version information
     def _FF008A(edt):
         ops_value = int.from_bytes(edt, 'big')

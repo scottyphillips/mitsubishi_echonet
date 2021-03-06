@@ -351,7 +351,6 @@ class EchoNetNode:
     def getOperationalStatus(self): # EPC 0x80
         return self.getMessage(0x80)
 
-
     """
     setOperationalStatus sets the ON/OFF state of the node
 
@@ -359,6 +358,14 @@ class EchoNetNode:
     """
     def setOperationalStatus(self, status): # EPC 0x80
         return self.setMessage(0x80, 0x30 if status else 0x31)
+
+    """
+    getIdentificationNumber returns a number used to identify an object uniquely
+
+    :return: Identification number as a string.
+    """
+    def getIdentificationNumber(self): # EPC 0x83
+        return self.getMessage(0x83)
 
     """
     On sets the node to ON.
