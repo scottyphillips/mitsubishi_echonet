@@ -13,3 +13,6 @@ v0.2.1, 18 August 2019 -- Changed mode 'dehumidify' to 'dry' for HA compatibilit
 v0.2.2, 24 Feb 2020 -- Minor update to stop HA crashing if no response is received.
 v0.3, 2 March 2020 -- Added in function to measure outdoor temperature
 v0.3.1, 1 July 2020 -- Fixed transaction_id rollover bug
+v0.4, 8 Sep 2020 -- Support Swing Mode
+v0.4.1, 9 Sep 2020 -- Bug Fix for Swing mode
+v0.5, 12 June 2021 -- Include new methods for Room temperature, UID, and outdoor temperature fixes
