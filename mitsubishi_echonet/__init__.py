@@ -445,7 +445,7 @@ class HomeAirConditioner(EchoNetNode):
             self.roomTemperature = self.JSON['room_temperature']
             self.status = self.JSON['status']
             self.swing_mode = self.JSON['swing_mode'] if 'swing_mode' in self.JSON.values() else None
-            self.outdoorTemperature = self.JSON['outdoor_temperature']
+            self.outdoorTemperature = self.JSON['outdoor_temperature'] if 'outdoor_temperature' in self.JSON.values() else None
         return returned_data
 
     """
