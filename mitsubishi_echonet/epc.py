@@ -1323,7 +1323,7 @@ EPC_SUPER = {
 	0x80: ('Operation status', None),
 	0x81: ('Installation location', f._FF0081),
 	0x82: ('Standard version information', f._FF0082),
-	0x83: ('Identification number', None),
+	0x83: ('Identification number', f._FF0083),
 	0x84: ('Measured instantaneous power consumption', None),
 	0x85: ('Measured cumulative power consumption', None),
 	0x86: ('Manufacturers fault code', None),
