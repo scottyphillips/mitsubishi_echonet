@@ -513,7 +513,16 @@ class HomeAirConditioner(EchoNetNode):
             return False
 
     """
-    getOutdoorTemperature get the temperature that has been set in the HVAC
+    getRoomTemperature get the HVAV's room temperature.
+
+    return: A string representing the room temperature.
+    """
+    def getRoomTemperature(self):
+        self.roomTemperature = self.getMessage(0xBB)['room_temperature']
+        return self.roomTemperature
+
+    """
+    getOutdoorTemperature get the outdoor temperature that has been set in the HVAC
 
     return: A string representing the configured outdoor temperature.
     """
