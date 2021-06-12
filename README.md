@@ -116,7 +116,7 @@ NOTE: For Home Assistant users there is now a dedicated repo for the related Hom
 ## Hall of Fame
 Thanks to Masaki Tagawa, Paul, khcnz, and Kolodnerd for each contributing code updates to v0.5.
 
-Thanks to Karl Chaffey and Alfie Gerner for contributing code updates for v0.4.
+Thanks to Karl Chaffey, Dick Swart, and Alfie Gerner for contributing code updates for v0.4.
 
 Thanks to Jeffro Carr who inspired me to write my own native Python ECHONET
 library for Home Assistant. I could not get his Node JS Docker container
