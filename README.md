@@ -114,9 +114,9 @@ NOTE: For Home Assistant users there is now a dedicated repo for the related Hom
 'example.py' gives you an idea how to drive the HVAC directly from Python using this library.
 
 ## Hall of Fame
-Thanks to Masaki Tagawa, "New Zealand Paul", and "Kolodnerd" for each contributing code updates to v0.5.
+Thanks to Masaki Tagawa, Paul, khcnz, and Kolodnerd for each contributing code updates to v0.5.
 
-Thanks to Karl Chaffey for contributing code updates for v0.4.
+Thanks to Karl Chaffey and Alfie Gerner for contributing code updates for v0.4.
 
 Thanks to Jeffro Carr who inspired me to write my own native Python ECHONET
 library for Home Assistant. I could not get his Node JS Docker container
