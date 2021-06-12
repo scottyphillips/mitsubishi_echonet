@@ -16,12 +16,15 @@ for node in echonet_objects:
    print("ECHONET node {} available Set properties:".format(node.netif))
    print(node.fetchSetProperties())
    print(node.update())
-   # aircon.on()
+   print(node.JSON['outdoor_temperature'])
+   print(node.JSON.keys())
+   print(node.outdoorTemperature)   
+# aircon.on()
   # print(node.getAirflowVert())
    # print(node.getAutoDirection())
     #print(node.getSwingMode())
 
-   node.setSwingMode('vert')
+   # node.setSwingMode('vert')
    # node.setSwingMode('not-used')
 
    # node.setAirFlowVert('central')

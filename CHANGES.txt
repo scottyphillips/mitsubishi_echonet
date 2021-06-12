@@ -16,3 +16,4 @@ v0.3.1, 1 July 2020 -- Fixed transaction_id rollover bug
 v0.4, 8 Sep 2020 -- Support Swing Mode
 v0.4.1, 9 Sep 2020 -- Bug Fix for Swing mode
 v0.5, 12 June 2021 -- Include new methods for Room temperature, UID, and outdoor temperature fixes
+v0.5.1, 12 June 2021 -- Bug Fix for Outdoor Temperature and Swing Mode
