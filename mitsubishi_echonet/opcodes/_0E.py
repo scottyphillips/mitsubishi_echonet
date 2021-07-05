@@ -10,9 +10,9 @@ def _F0D6(edt):
     eojci = int(data & 0x000000ff)
 
     # do something
-    print("Group: " + EOJX_GROUP[eojgc])
-    print("Code: " + EOJX_CLASS[eojgc][eojcc])
-    print("Instance: " + str(eojci))
+#    print("Group: " + EOJX_GROUP[eojgc])
+#    print("Code: " + EOJX_CLASS[eojgc][eojcc])
+#    print("Instance: " + str(eojci))
 
     return {
       "eojgc": eojgc,

@@ -26,16 +26,16 @@ ENL_MULTICAST_ADDRESS = "224.0.23.0"
 # EHD1: ECHONET Lite Header 1
 # ---------------------------------------------------------------- */
 EHD1 = {
- 0x00: 'Not available',
- 0x10: 'Conventional ECHONET Lite Specification'
+    0x00: 'Not available',
+    0x10: 'Conventional ECHONET Lite Specification'
 }
 
 # ------------------------------------------------------------------
 # EHD1: ECHONET Lite Header 2
 # ---------------------------------------------------------------- */
 EHD2 = {
-	0x81: 'Format 1 (specified message format)',
-	0x82: 'Format 2 (arbitrary message format)'
+    0x81: 'Format 1 (specified message format)',
+    0x82: 'Format 2 (arbitrary message format)'
 }
 
 
@@ -197,7 +197,7 @@ def sendMessage(message, ip_address):
             except socket.timeout:
                 break
             else:
-                print(payload)
+                # print(payload)
                 # Received a packet.
                 data.append({'server':server,'payload':payload})
     finally:

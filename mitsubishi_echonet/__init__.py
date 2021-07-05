@@ -10,23 +10,28 @@ stage it will control the AC and thats it!
 
 import socket
 import struct
-# import sys
-# import time
 from .eojx import *
-# from .epc  import *
-from .esv  import *
 from .functions  import buildEchonetMsg
 from .classes.HomeAirConditioner import *
 from .classes.EchoNetNode import *
 
 """
-discover is used to identify ECHONET nodes. Original plan was for this library
-to fully support a multitude of ECHONET devices.
+discover is used to identify ECHONET instances.
+Previously this would return python objects corresponding to the echonet instances
+but this got ugly and involved using lookup tables and eval.
+Could probably fix this with switch case using the EOJX table.
+As it stand you can use the object identifiers to instantiate your own objects
 
-return: an array of discovered ECHONET node objects.
+param ip_address: A string representing the IPv4 address e.g "1.2.3.4"
+                  Defaults to ENL multicast address 224.0.23.0
+
+return: an array of discovered ECHONET node instance information for example
+        [{'eojgc': 1, 'eojcc': 48, 'eojci': 1, 'group':
+        'Air conditioner-related device group', 'code': 'Home air conditioner'}]
 """
-def discover(echonet_class = ""):
+def discover(IP_ADDRESS = "224.0.23.0"):
     eoa = []; # array containing echonet objects
+    # ESV 0x62 and EPC 0xD6 correspond to 'Self-node instance list S'
     tx_payload = {
         'TID' : 0x01, # Transaction ID 1
         'DEOJGC': 0x0E,
@@ -39,20 +44,27 @@ def discover(echonet_class = ""):
     message = buildEchonetMsg(tx_payload)
 
     # Send message to multicast group and receive data
-    data = sendMessage(message, ENL_MULTICAST_ADDRESS);
+    data = sendMessage(message, IP_ADDRESS);
     # Decipher received message for each node discovered:
 
     for node in data:
+        enl_instance = {}
         rx = decodeEchonetMsg(node['payload'])
         if (tx_payload['DEOJGC'] == rx['SEOJGC'] and
         rx['TID'] == tx_payload['TID'] and
         rx['OPC'][0]['EPC'] == 0xd6):
-            # Action EDT payload by calling applicable function using lookup table
-            edt = EPC_CODE[rx['SEOJGC']] [rx['SEOJCC']] [rx['OPC'][0]['EPC']][1](rx['OPC'][0]['EDT'])
-            # edt = EPC_CODE[rx['SEOJGC']][rx['SEOJCC']][rx['OPC'][0]['EPC']][1](rx['OPC'][0]['EDT'])
-            echonet_object = eval(EPC_CODE[edt['eojgc']][edt['eojcc']]['class'])(node['server'][0], edt['eojci'])
-            print('ECHONET lite node discovered at {} - {} class'.format(node['server'][0], EOJX_CLASS[edt['eojgc']][edt['eojcc']]))
-            if echonet_class == EOJX_CLASS[edt['eojgc']][edt['eojcc']] or echonet_class == "":
-                eoa.append(echonet_object)
+            # Process EDT for discovery info
+            edt = rx['OPC'][0]['EDT']
+            # def _F0D6(edt):
+            data = int.from_bytes(edt, 'big')
+            edtnum = int((data & 0xff000000) / 0x1000000)
+            enl_instance['eojgc'] = int((data & 0x00ff0000) / 0x10000)
+            enl_instance['eojcc'] = int((data & 0x0000ff00) / 0x100)
+            enl_instance['eojci'] = int(data & 0x000000ff)
+
+            enl_instance['group'] = EOJX_GROUP[enl_instance['eojgc']]
+            enl_instance['code'] = EOJX_CLASS[enl_instance['eojgc']][enl_instance['eojcc'] ]
+
+            eoa.append(enl_instance)
 
     return eoa

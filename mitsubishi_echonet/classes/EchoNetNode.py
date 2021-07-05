@@ -29,6 +29,8 @@ class EchoNetNode:
 
     :param tx_epc: EPC byte code for the request.
     :return: the deconstructed payload for the response
+
+    TO DO - refactor getOpCode to no longer use lookup table
     """
     def getMessage(self, epc, pdc = 0x00):
         self.last_transaction_id += 1

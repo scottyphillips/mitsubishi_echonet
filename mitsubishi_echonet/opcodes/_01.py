@@ -34,7 +34,7 @@ def _30A0(edt):
 
 def _30AA(edt):
     op_mode = int.from_bytes(edt, 'big')
-    print(hex(op_mode))
+    # print(hex(op_mode))
     values = {
       0x40: 'Normal operation',
       0x41: 'Defrosting',
