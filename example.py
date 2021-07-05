@@ -24,4 +24,5 @@ print(aircon.fetchGetProperties())
    # aircon.setFanSpeed('medium-low')
 
 #   print("Getting outdoor temperature")
-print(aircon.getOutdoorTemperature())
+print(aircon.getFanSpeed())
+print(aircon.update())

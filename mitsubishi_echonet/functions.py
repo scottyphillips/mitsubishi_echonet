@@ -223,18 +223,20 @@ def getOpCode(ip_address, deojgc, deojcc, deojci, opc, tid=0x01):
         # Build ECHONET discover messafge.
         message = buildEchonetMsg(tx_payload)
         rx_data = sendMessage(message, ip_address)
-        return_data = {}
+        return_data = []
         if len(rx_data) > 0:
             rx = decodeEchonetMsg(rx_data[0]['payload'])
+            print(rx)
             # Action EDT payload by calling applicable function using lookup table
             for value in rx['OPC']:
-                rx_edt = value['EDT']
-                rx_epc = value['EPC']
-                if rx_epc in EPC_CODE[deojgc][deojcc]['functions']:
-                    edt = EPC_CODE[deojgc][deojcc]['functions'][rx_epc][1](rx_edt)
-                else:
-                    edt = EPC_SUPER[rx_epc][1](rx_edt)
-                return_data.update(edt)
+                edt = {}
+                edt['rx_edt'] = value['EDT']
+                edt['rx_epc'] = value['EPC']
+                #if rx_epc in EPC_CODE[deojgc][deojcc]['functions']:
+                #    edt = EPC_CODE[deojgc][deojcc]['functions'][rx_epc][1](rx_edt)
+                #else:
+                #    edt = EPC_SUPER[rx_epc][1](rx_edt)
+                return_data.append(edt)
         return return_data
 
 def getAllPropertyMaps(ip_address, deojgc, deojcc, deojci):
