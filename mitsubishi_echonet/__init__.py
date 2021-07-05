@@ -57,14 +57,17 @@ def discover(IP_ADDRESS = "224.0.23.0"):
             edt = rx['OPC'][0]['EDT']
             # def _F0D6(edt):
             data = int.from_bytes(edt, 'big')
-            edtnum = int((data & 0xff000000) / 0x1000000)
-            enl_instance['eojgc'] = int((data & 0x00ff0000) / 0x10000)
-            enl_instance['eojcc'] = int((data & 0x0000ff00) / 0x100)
-            enl_instance['eojci'] = int(data & 0x000000ff)
+            #1st byte: Total number of instances
+            #2nd to 253rd bytes: ECHONET object codes (EOJ3 bytes) enumerated
+            edtnum = bytearray(edt)[0]
+            for x in range(edtnum):
+                enl_instance['eojgc'] = bytearray(edt)[1 + (3 * x)]
+                enl_instance['eojcc'] = bytearray(edt)[2 + (3 * x)]
+                enl_instance['eojci'] = bytearray(edt)[3 + (3 * x)]
 
-            enl_instance['group'] = EOJX_GROUP[enl_instance['eojgc']]
-            enl_instance['code'] = EOJX_CLASS[enl_instance['eojgc']][enl_instance['eojcc'] ]
+                enl_instance['group'] = EOJX_GROUP[enl_instance['eojgc']]
+                enl_instance['code'] = EOJX_CLASS[enl_instance['eojgc']][enl_instance['eojcc'] ]
 
-            eoa.append(enl_instance)
+                eoa.append(enl_instance)
 
     return eoa

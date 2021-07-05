@@ -14,7 +14,7 @@ class HomeAirConditioner(EchoNetNode):
 
     """
     Construct a new 'HomeAirConditioner' object.
-    In theory this would work for any ECHNONET enabled domestic AC.
+    In theory this would work for any ECHONET enabled domestic AC.
 
     :param instance: Instance ID
     :param netif: IP address of node
