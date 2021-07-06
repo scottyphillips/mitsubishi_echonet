@@ -205,8 +205,8 @@ class HomeAirConditioner(EchonetInstance):
     :param netif: IP address of node
     """
     def __init__(self, netif, instance = 0x1):
-        self.eojgc = 0x01
-        self.eojcc = 0x30
+        self.eojgc = 0x01 #	Air conditioner-related device group
+        self.eojcc = 0x30 # Home air conditioner class
         EchonetInstance.__init__(self, self.eojgc, self.eojcc, instance, netif)
 
         # self.available_functions = EPC_CODE[self.eojgc][self.eojcc]['functions']
