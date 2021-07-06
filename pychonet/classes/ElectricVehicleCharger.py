@@ -1,11 +1,3 @@
-import socket
-import struct
-import sys
-import time
-from ..eojx import *
-from ..epc  import *
-from ..esv  import *
-# from ..functions  import Function as F
 from .EchonetInstance import EchonetInstance
 from ..functions import getOpCode
 
