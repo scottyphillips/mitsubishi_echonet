@@ -68,6 +68,72 @@ def _30B0(edt):
     }
     return {'mode': values.get(op_mode, "Invalid setting" )}
 
+# Automatic control of air flow direction setting
+def _30A1(edt):
+    op_mode = int.from_bytes(edt, 'big')
+    values = {
+       0x41: 'auto',
+       0x42: 'non-auto',
+       0x43: 'auto-vert',
+       0x44: 'auto-horiz'
+    }
+    return {'auto_direction': values.get(op_mode, "Invalid setting")}
+
+# Automatic swing of air flow direction setting
+def _30A3(edt):
+    op_mode = int.from_bytes(edt, 'big')
+    values = {
+       0x31: 'not-used',
+       0x41: 'vert',
+       0x42: 'horiz',
+       0x43: 'vert-horiz'
+    }
+    return {'swing_mode': values.get(op_mode, "Invalid setting")}
+
+# Air flow direction (vertical) setting
+def _30A4(edt):
+    op_mode = int.from_bytes(edt, 'big')
+    values = {
+      0x41: 'upper',
+      0x44: 'upper-central',
+      0x43: 'central',
+      0x45: 'lower-central',
+      0x42: 'lower'
+      }
+    # return({'special':hex(op_mode)})
+    return {'airflow_vert': values.get(op_mode, "Invalid setting")}
+
+# Air flow direction (horiziontal) setting
+def _30A5(edt):
+    # complies with version 2.01 Release a (page 3-88)
+    op_mode = int.from_bytes(edt, 'big')
+    values = {
+      0x41: 'rc-right',
+      0x42: 'left-lc',
+      0x43: 'lc-center-rc',
+      0x44: 'left-lc-rc-right',
+      0x51: 'right',
+      0x52: 'rc',
+      0x54: 'center',
+      0x55: 'center-right',
+      0x56: 'center-rc',
+      0x57: 'center-rc-right',
+      0x58: 'lc',
+      0x59: 'lc-right',
+      0x5A: 'lc-rc',
+      0x60: 'left',
+      0x61: 'left-right',
+      0x62: 'left-rc',
+      0x63: 'left-rc-right',
+      0x64: 'left-center',
+      0x65: 'left-center-right',
+      0x66: 'left-center-rc',
+      0x67: 'left-center-rc-right',
+      0x69: 'left-lc-right',
+      0x6A: 'left-lc-rc'
+      }
+    # return({'special':hex(op_mode)})
+    return {'airflow_horiz': values.get(op_mode, "Invalid setting")}
 
 """Class for Home AirConditioner Objects"""
 class HomeAirConditioner(EchoNetNode):
@@ -85,12 +151,6 @@ class HomeAirConditioner(EchoNetNode):
         self.eojcc = 0x30
         # self.available_functions = EPC_CODE[self.eojgc][self.eojcc]['functions']
         # self.propertyMaps = getAllPropertyMaps(self.netif, self.eojgc, self.eojcc , self.instance)
-        self.setTemperature = None
-        self.roomTemperature = None
-        self.outdoorTemperature = None
-        self.mode = False
-        # self.fan_speed = None
-        self.JSON = {}
 
     """
     update is used as a quick and dirty way of producing a dict useful for API polling etc
@@ -107,7 +167,8 @@ class HomeAirConditioner(EchoNetNode):
                       0xB3, # Set temperature
                       0xA0, # fan speed
                       0xBB, # room temperature
-                      0xB0] # mode
+                      0xB0, # mode
+                      0xBE] # outdoor temperature
                       #0x8A] # manufactorers code
         opc = []
         returned_json_data = {}
@@ -125,9 +186,11 @@ class HomeAirConditioner(EchoNetNode):
                 elif data['rx_epc'] == 0xA0: #fan speed
                     returned_json_data.update(_30A0(data['rx_edt']))
                 elif data['rx_epc'] == 0xBB: #room temperature
-                    print(data['rx_edt'])
+                    returned_json_data.update(_30BB(data['rx_edt']))
                 elif data['rx_epc'] == 0xB0: #mode
                     returned_json_data.update(_30B0(data['rx_edt']))
+                elif data['rx_epc'] == 0xBE: #mode
+                    returned_json_data.update(_30BE(data['rx_edt']))
 
         return returned_json_data
 
@@ -149,7 +212,6 @@ class HomeAirConditioner(EchoNetNode):
     """
     def setOperationalTemperature(self, temperature):
         if self.setMessage(0xB3, int(temperature)):
-            self.setTemperature = temperature
             return True
         else:
             return False
@@ -170,11 +232,8 @@ class HomeAirConditioner(EchoNetNode):
     param mode: A string representing the desired mode.
     """
     def setMode(self, mode):
-        if self.setMessage(0xB0, MODES[mode]):
-            self.mode = mode
-            return True
-        else:
-            return False
+        return self.setMessage(0xB0, MODES[mode])
+
     """
     GetFanSpeed gets the current fan speed (e.g Low, Medium, High etc)
     Refer EPC code 0xA0: ('Air flow rate setting')
@@ -195,23 +254,10 @@ class HomeAirConditioner(EchoNetNode):
     param fans_speed: A string representing the fan speed
     """
     def setFanSpeed(self, fan_speed):
-        if self.setMessage(0xA0, FAN_SPEED[fan_speed]):
-            return True
-        else:
-            return False
+        return self.setMessage(0xA0, FAN_SPEED[fan_speed])
 
     """
-    GetOutdoorTemperature get the temperature that has been set in the HVAC
-
-    return: A string representing the configured temperature.
-    """
-    def getOutdoorTemperature(self):
-        self.outdoorTemperature = self.getMessage(0xBE)['outdoor_temperature']
-        return self.outdoorTemperature
-
-
-    """
-    getRoomTemperature get the HVAV's room temperature.
+    getRoomTemperature get the HVAC's room temperature.
 
     return: A string representing the room temperature.
     """
@@ -226,8 +272,9 @@ class HomeAirConditioner(EchoNetNode):
     return: A string representing the configured outdoor temperature.
     """
     def getOutdoorTemperature(self):
-        self.outdoorTemperature = self.getMessage(0xBE)['outdoor_temperature']
-        return self.outdoorTemperature
+        raw_data= self.getMessage(0xBE)[0]
+        if raw_data['rx_epc'] == 0xBE:
+           return _30BE(raw_data['rx_edt'])
 
     """
     setSwingMode sets the automatic swing mode function
@@ -236,11 +283,7 @@ class HomeAirConditioner(EchoNetNode):
                        e.g: 'not-used', 'vert', 'horiz', 'vert-horiz'
     """
     def setSwingMode(self, swing_mode):
-        if self.setMessage(0xA3, SWING_MODE[swing_mode]):
-            self.swing_mode = swing_mode
-            return True
-        else:
-            return False
+        return self.setMessage(0xA3, SWING_MODE[swing_mode])
 
     """
     getSwingMode gets the swing mode that has been set in the HVAC
@@ -248,8 +291,9 @@ class HomeAirConditioner(EchoNetNode):
     return: A string representing the configured swing mode.
     """
     def getSwingMode(self):
-        self.swing_mode = self.getMessage(0xA3)['swing_mode']
-        return self.swing_mode
+        raw_data = self.getMessage(0xA3)[0]
+        if raw_data['rx_epc'] == 0xA3:
+            return _30A3(raw_data['rx_edt'])
 
 
     """
@@ -259,11 +303,7 @@ class HomeAirConditioner(EchoNetNode):
                            e.g: 'auto', 'non-auto', 'auto-horiz', 'auto-vert'
     """
     def setAutoDirection (self, auto_direction):
-        if self.setMessage(0xA1, AUTO_DIRECTION[auto_direction]):
-            self.auto_direction = auto_direction
-            return True
-        else:
-            return False
+        return self.setMessage(0xA1, AUTO_DIRECTION[auto_direction])
 
     """
     getAutoDirection get the direction mode that has been set in the HVAC
@@ -271,8 +311,9 @@ class HomeAirConditioner(EchoNetNode):
     return: A string representing the configured temperature.
     """
     def getAutoDirection(self):
-        self.auto_direction = self.getMessage(0xA1)['auto_direction']
-        return self.auto_direction
+        raw_data = self.getMessage(0xA1)[0]
+        if raw_data['rx_epc'] == 0xA1:
+            return _30A1(raw_data['rx_edt'])
 
 
     """
@@ -283,11 +324,7 @@ class HomeAirConditioner(EchoNetNode):
                          'lower-central', 'lower'
     """
     def setAirflowVert (self, airflow_vert):
-        if self.setMessage(0xA4, AIRFLOW_VERT[airflow_vert]):
-            self.airflow_vert = airflow_vert
-            return True
-        else:
-            return False
+        return self.setMessage(0xA4, AIRFLOW_VERT[airflow_vert])
 
     """
     getAirflowVert get the vertical vane setting that has been set in the HVAC
@@ -295,8 +332,9 @@ class HomeAirConditioner(EchoNetNode):
     return: A string representing vertical airflow setting
     """
     def getAirflowVert(self):
-        self.airflow_vert  = self.getMessage(0xA4)['airflow_vert']
-        return self.airflow_vert
+        raw_data = self.getMessage(0xA4)[0]
+        if raw_data['rx_epc'] == 0xA4:
+            return _30A4(raw_data['rx_edt'])
 
     """
     setAirflowHoriz sets the horizontal vane setting
@@ -305,11 +343,7 @@ class HomeAirConditioner(EchoNetNode):
                          e.g: 'left', 'lc', 'center', 'rc', 'right'
     """
     def setAirflowHoriz (self, airflow_horiz):
-        if self.setMessage(0xA5, AIRFLOW_HORIZ[airflow_horiz]):
-            self.airflow_horiz = airflow_horiz
-            return True
-        else:
-            return False
+        return self.setMessage(0xA5, AIRFLOW_HORIZ[airflow_horiz])
 
     """
     getAirflowHoriz get the horizontal vane setting that has been set in the HVAC
@@ -317,5 +351,6 @@ class HomeAirConditioner(EchoNetNode):
     return: A string representing vertical airflow setting e.g: 'left', 'lc', 'center', 'rc', 'right'
     """
     def getAirflowHoriz(self):
-        self.airflow_horiz  = self.getMessage(0xA5)['airflow_horiz']
-        return self.airflow_horiz
+        raw_data = self.getMessage(0xA5)[0]
+        if raw_data['rx_epc'] == 0xA5:
+            return _30A5(raw_data['rx_edt'])
