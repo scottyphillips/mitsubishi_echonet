@@ -208,3 +208,114 @@ class HomeAirConditioner(EchoNetNode):
     def getOutdoorTemperature(self):
         self.outdoorTemperature = self.getMessage(0xBE)['outdoor_temperature']
         return self.outdoorTemperature
+
+
+    """
+    getRoomTemperature get the HVAV's room temperature.
+
+    return: A string representing the room temperature.
+    """
+    def getRoomTemperature(self):
+        raw_data = self.getMessage(0xBB)[0]
+        if raw_data['rx_epc'] == 0xBB:
+            return _30BB(raw_data['rx_edt'])
+
+    """
+    getOutdoorTemperature get the outdoor temperature that has been set in the HVAC
+
+    return: A string representing the configured outdoor temperature.
+    """
+    def getOutdoorTemperature(self):
+        self.outdoorTemperature = self.getMessage(0xBE)['outdoor_temperature']
+        return self.outdoorTemperature
+
+    """
+    setSwingMode sets the automatic swing mode function
+
+    params swing_mode: A string representing automatic swing mode
+                       e.g: 'not-used', 'vert', 'horiz', 'vert-horiz'
+    """
+    def setSwingMode(self, swing_mode):
+        if self.setMessage(0xA3, SWING_MODE[swing_mode]):
+            self.swing_mode = swing_mode
+            return True
+        else:
+            return False
+
+    """
+    getSwingMode gets the swing mode that has been set in the HVAC
+
+    return: A string representing the configured swing mode.
+    """
+    def getSwingMode(self):
+        self.swing_mode = self.getMessage(0xA3)['swing_mode']
+        return self.swing_mode
+
+
+    """
+    setAutoDirection sets the automatic direction mode function
+
+    params auto_direction: A string representing automatic direction mode
+                           e.g: 'auto', 'non-auto', 'auto-horiz', 'auto-vert'
+    """
+    def setAutoDirection (self, auto_direction):
+        if self.setMessage(0xA1, AUTO_DIRECTION[auto_direction]):
+            self.auto_direction = auto_direction
+            return True
+        else:
+            return False
+
+    """
+    getAutoDirection get the direction mode that has been set in the HVAC
+
+    return: A string representing the configured temperature.
+    """
+    def getAutoDirection(self):
+        self.auto_direction = self.getMessage(0xA1)['auto_direction']
+        return self.auto_direction
+
+
+    """
+    setAirflowVert sets the vertical vane setting
+
+    params airflow_vert: A string representing vertical airflow setting
+                         e.g: 'upper', 'upper-central', 'central',
+                         'lower-central', 'lower'
+    """
+    def setAirflowVert (self, airflow_vert):
+        if self.setMessage(0xA4, AIRFLOW_VERT[airflow_vert]):
+            self.airflow_vert = airflow_vert
+            return True
+        else:
+            return False
+
+    """
+    getAirflowVert get the vertical vane setting that has been set in the HVAC
+
+    return: A string representing vertical airflow setting
+    """
+    def getAirflowVert(self):
+        self.airflow_vert  = self.getMessage(0xA4)['airflow_vert']
+        return self.airflow_vert
+
+    """
+    setAirflowHoriz sets the horizontal vane setting
+
+    params airflow_horiz: A string representing horizontal airflow setting
+                         e.g: 'left', 'lc', 'center', 'rc', 'right'
+    """
+    def setAirflowHoriz (self, airflow_horiz):
+        if self.setMessage(0xA5, AIRFLOW_HORIZ[airflow_horiz]):
+            self.airflow_horiz = airflow_horiz
+            return True
+        else:
+            return False
+
+    """
+    getAirflowHoriz get the horizontal vane setting that has been set in the HVAC
+
+    return: A string representing vertical airflow setting e.g: 'left', 'lc', 'center', 'rc', 'right'
+    """
+    def getAirflowHoriz(self):
+        self.airflow_horiz  = self.getMessage(0xA5)['airflow_horiz']
+        return self.airflow_horiz
