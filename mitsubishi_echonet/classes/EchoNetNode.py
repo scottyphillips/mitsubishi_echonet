@@ -41,6 +41,14 @@ def _008A(edt):
     ops_value = int.from_bytes(edt, 'big')
     return {'manufacturer': ops_value}
 
+def _0083(edt):
+    if edt[0] == 0xFE:
+        ops_value = edt[1:].hex()
+    else:
+        ops_value = None
+    return {'identification_number': ops_value}
+
+
 
 class EchoNetNode:
 
@@ -163,7 +171,7 @@ class EchoNetNode:
     def getIdentificationNumber(self): # EPC 0x83
         raw_data = self.getMessage(0x83)[0]
         if raw_data['rx_epc'] == 0x83:
-            return _XXXX(raw_data['rx_edt'])
+            return _0083(raw_data['rx_edt'])
 
     def getAllPropertyMaps(self):
         propertyMaps = {}

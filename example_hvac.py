@@ -21,3 +21,4 @@ print(aircon.getAllPropertyMaps())
 
 # Home Assistant friendly updates
 print(aircon.update())
+print(aircon.getIdentificationNumber())
