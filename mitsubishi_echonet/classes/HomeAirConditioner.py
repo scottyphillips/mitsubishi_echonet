@@ -1,5 +1,5 @@
 from .EchoNetNode import _FF80, EchoNetNode
-from ..functions import *
+from ..functions import getOpCode
 
 MODES = {
 	'auto':  	0x41,
@@ -232,7 +232,7 @@ class HomeAirConditioner(EchoNetNode):
         returned_json_data = {}
         self.last_transaction_id += 1
         for value in attributes:
-        #  if value in self.propertyMaps['getProperties'].values():
+          if value in self.propertyMaps[0x9F].values():
             opc.append({'EPC': value})
         raw_data = getOpCode(self.netif, self.eojgc, self.eojcc, self.instance, opc, self.last_transaction_id )
         if raw_data is not False:

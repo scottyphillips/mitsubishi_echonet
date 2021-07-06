@@ -2,15 +2,9 @@ import socket
 import struct
 import sys
 import time
-from .eojx import *
-from .epc  import *
-from .esv  import *
+from .eojx import EOJX_GROUP, EOJX_CLASS
 
-# EF0D6 will decode EDT0 to derive the node data which could be useful to
-# create a echonet object of a particular type. Most likely called
-# through the node creation process.
-#
-# Profile class group 0E
+# Echonetlite message format:
 #
 # - EDT0     |Property value data             |01 ..|01 01 30 01
 #  - NUM     |Total number of instances       |01   |1
@@ -36,6 +30,45 @@ EHD1 = {
 EHD2 = {
     0x81: 'Format 1 (specified message format)',
     0x82: 'Format 2 (arbitrary message format)'
+}
+
+# ------------------------------------------------------------------
+# ESV
+# ------------------------------------------------------------------
+GETC = 			0x60
+SETC = 			0x61
+GET  = 			0x62
+INFREQ =		0x63
+SETGET = 		0x6E
+SETRES =		0x71
+GETRES =		0x72
+INF =			0x73
+INFC = 			0x74
+INFC_RES =		0x7A
+SETGET_RES =	0x7E
+SETI_SNA = 		0x50
+SETC_SND =		0x51
+GET_SNA = 		0x52
+INF_SNA = 		0x53
+SETGET_SNA =	0x5E
+
+ESV_CODES = {
+	0x60: {'name': 'GetC', 'description': 'Property value write request (no response required)'},
+	0x61: {'name': 'SetC', 'description': 'Property value write request (response required)'},
+	0x62: {'name': 'Get', 'description': 'Property value read request'},
+	0x63: {'name': 'INF_REQ', 'description': 'Property value notification request'},
+	0x6E: {'name': 'SetGet', 'description': 'Property value write & read request'},
+	0x71: {'name': 'Set_Res', 'description': 'Property value Property value write response'},
+	0x72: {'name': 'Get_Res' , 'description': 'Property value read response'},
+	0x73: {'name': 'INF' , 'description': 'Property value notification'},
+	0x74: {'name': 'INFC', 'description': 'Property value notification (response required)'},
+	0x7A: {'name': 'INFC_Res' , 'description': 'Property value notification response'},
+	0x7E: {'name': 'SetGet_Res' , 'description': 'Property value write & read response'},
+	0x50: {'name': 'SetI_SNA', 'description': 'Property value write request (response not possible)'},
+	0x51: {'name': 'SetC_SNA' , 'description': 'Property value write request (response not possible)'},
+	0x52: {'name': 'Get_SNA', 'description': 'Property value read (response not possible)'},
+	0x53: {'name': 'INF_SNA', 'description': 'Property value notification (response not possible)'},
+    0x5E: {'name': 'SetGet_SNA', 'description': 'Property value write & read (response not possible)'}
 }
 
 
@@ -207,9 +240,11 @@ def sendMessage(message, ip_address):
 
 
 """
-opCode is used to return details from a node using the lookup table
+getOpCode is used to crunch the EPC and EDT payloads from GET requests
 
-return: an dict containing the properties of the node.
+return: an array containing dicts in the following ecample format:
+[{'rx_edt': b'\x11\r\x01\x01\t\x00\x00\x01\x00\x01\x01\x01\x08\x00\x02\n\x03', 'rx_epc': 159}, {'rx_edt': b'\x06\x80\x81\x8f\xa0\xb0\xb3', 'rx_epc': 158}]
+
 """
 def getOpCode(ip_address, deojgc, deojcc, deojci, opc, tid=0x01):
         tx_payload = {
@@ -226,31 +261,13 @@ def getOpCode(ip_address, deojgc, deojcc, deojci, opc, tid=0x01):
         return_data = []
         if len(rx_data) > 0:
             rx = decodeEchonetMsg(rx_data[0]['payload'])
-            # print(rx)
+
             # Action EDT payload by calling applicable function using lookup table
             for value in rx['OPC']:
                 edt = {}
                 edt['rx_edt'] = value['EDT']
                 edt['rx_epc'] = value['EPC']
-                #if rx_epc in EPC_CODE[deojgc][deojcc]['functions']:
-                #    edt = EPC_CODE[deojgc][deojcc]['functions'][rx_epc][1](rx_edt)
-                #else:
-                #    edt = EPC_SUPER[rx_epc][1](rx_edt)
                 return_data.append(edt)
-        return return_data
 
-def getAllPropertyMaps(ip_address, deojgc, deojcc, deojci):
-    propertyMaps = {}
-    property_map = getOpCode(ip_address, deojgc, deojcc, deojci, [{'EPC':0x9F},{'EPC':0x9E}])
-    # setProperties = getOpCode(ip_address, deojgc, deojcc, deojci, [{'EPC':0x9E}])
-    # print(property_map)
-    for property in property_map:
-        propertyMaps[property] = {}
-        for value in property_map[property]:
-            if value in EPC_CODE[0x01][0x30]['functions']:
-                propertyMaps[property][EPC_CODE[0x01][0x30]['functions'][value][0]] = value
-            elif value in EPC_SUPER:
-                propertyMaps[property][EPC_SUPER[value][0]] = value
-            # else:
-                 #print("code not found: " + hex(value) )
-    return propertyMaps
+        print(return_data)
+        return return_data

@@ -10,10 +10,10 @@ stage it will control the AC and thats it!
 
 import socket
 import struct
-from .eojx import *
-from .functions  import buildEchonetMsg
-from .classes.HomeAirConditioner import *
-from .classes.EchoNetNode import *
+from .eojx import EOJX_GROUP, EOJX_CLASS
+from .functions  import buildEchonetMsg, sendMessage, decodeEchonetMsg
+from .classes.EchoNetNode import EchoNetNode
+from .classes.HomeAirConditioner import HomeAirConditioner
 
 """
 discover is used to identify ECHONET instances.
@@ -55,19 +55,17 @@ def discover(IP_ADDRESS = "224.0.23.0"):
         rx['OPC'][0]['EPC'] == 0xd6):
             # Process EDT for discovery info
             edt = rx['OPC'][0]['EDT']
-            # def _F0D6(edt):
+            # Correspondes to 0xF0,0xD6
             data = int.from_bytes(edt, 'big')
             #1st byte: Total number of instances
             #2nd to 253rd bytes: ECHONET object codes (EOJ3 bytes) enumerated
             edtnum = bytearray(edt)[0]
             for x in range(edtnum):
+                enl_instance['netaddr'] = node['server'][0]
                 enl_instance['eojgc'] = bytearray(edt)[1 + (3 * x)]
                 enl_instance['eojcc'] = bytearray(edt)[2 + (3 * x)]
                 enl_instance['eojci'] = bytearray(edt)[3 + (3 * x)]
-
                 enl_instance['group'] = EOJX_GROUP[enl_instance['eojgc']]
                 enl_instance['code'] = EOJX_CLASS[enl_instance['eojgc']][enl_instance['eojcc'] ]
-
                 eoa.append(enl_instance)
-
     return eoa

@@ -1,6 +1,6 @@
 # from ..eojx import *
-from ..epc  import *
-from ..functions import *
+from ..epc  import EPC_CODE, EPC_SUPER
+from ..functions import buildEchonetMsg, sendMessage, decodeEchonetMsg, getOpCode
 
 """
 Superclass for Echonet instance objects.
@@ -27,13 +27,28 @@ def _009X(edt):
                 payload.append(EPC)
     return payload
 
+# Check install location
+def _0081(edt):
+    # ops_value = int.from_bytes(edt, 'little')
+    return {'install_location': None}
+# Check standard version information
+def _0082(edt):
+    # ops_value = int.from_bytes(edt, 'little')
+    return {'version_info': None}
+
+# Check standard version information
+def _008A(edt):
+    ops_value = int.from_bytes(edt, 'big')
+    return {'manufacturer': ops_value}
+
+
 class EchoNetNode:
 
     """
-    Construct a new 'EchoNet' object.
+    Constructs an object to represent an Echonet lite instance .
 
-    :param eojgc
-    :param eojcc
+    :param eojgc: Echonet group code
+    :param eojcc: Echonet class code
     :param instance: Instance ID
     :param netif: IP address of node
     """
@@ -149,7 +164,7 @@ class EchoNetNode:
                     if value in EPC_CODE[self.eojgc][self.eojcc]:
                         propertyMaps[property['rx_epc']][EPC_CODE[self.eojgc][self.eojcc][value]] = value
                     elif value in EPC_SUPER:
-                        propertyMaps[property['rx_epc']][EPC_SUPER[value][0]] = value
+                        propertyMaps[property['rx_epc']][EPC_SUPER[value]] = value
                     else:
                         print("code not found: " + hex(value) )
         return propertyMaps
