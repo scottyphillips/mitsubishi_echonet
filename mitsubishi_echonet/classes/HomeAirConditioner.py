@@ -1,18 +1,77 @@
-#import socket
-#import struct
-#import sys
-#import time
-#from ..eojx import *
-# from ..epc  import *
-# from ..esv  import *
-# from ..functions  import Function as F
-from .EchoNetNode import EchoNetNode
+from .EchoNetNode import _FF80, EchoNetNode
 from ..functions import *
 
-# Check status of Air Conditioner
-def _3080(edt):
-    ops_value = int.from_bytes(edt, 'big')
-    return {'status': ('On' if ops_value == 0x30 else 'Off')}
+MODES = {
+	'auto':  	0x41,
+	'cool':  	0x42,
+	'heat':  	0x43,
+	'dry':  	0x44,
+	'fan_only':	0x45,
+	'other': 	0x40
+}
+
+FAN_SPEED = {
+	'auto':	        0x41,
+	'minimum':  	0x31,
+	'low':  		0x32,
+	'medium-low': 	0x33,
+	'medium':		0x34,
+	'medium-high': 	0x35,
+	'high':			0x36,
+	'very-high':    0x37,
+	'max':			0x38
+}
+
+AIRFLOW_HORIZ = {
+    'rc-right':             0x41,
+    'left-lc':              0x42,
+    'lc-center-rc':         0x43,
+    'left-lc-rc-right':     0x44,
+    'right':                0x51,
+    'rc':                   0x52,
+    'center':               0x54,
+    'center-right':         0x55,
+    'center-rc':            0x56,
+    'center-rc-right':      0x57,
+    'lc':                   0x58,
+    'lc-right':             0x59,
+    'lc-rc':                0x5A,
+    'left':                 0x60,
+    'left-right':           0x61,
+    'left-rc':              0x62,
+    'left-rc-right':        0x63,
+    'left-center':          0x64,
+    'left-center-right':    0x65,
+    'left-center-rc':       0x66,
+    'left-center-rc-right': 0x67,
+    'left-lc-right':        0x69,
+    'left-lc-rc':           0x6A
+}
+
+AIRFLOW_VERT = {
+    'upper':            0x41,
+    'upper-central':    0x44,
+    'central':          0x43,
+    'lower-central':    0x45,
+    'lower':            0x42
+}
+
+AUTO_DIRECTION = {
+    'auto':         0x41,
+    'non-auto':     0x42,
+    'auto-vert':    0x43,
+    'auto-horiz':   0x44
+}
+
+    # Automatic swing of air flow direction setting
+
+SWING_MODE = {
+    'not-used':     0x31,
+    'vert':         0x41,
+    'horiz':        0x42,
+    'vert-horiz':   0x43
+}
+
 
 # Check status of Configured Temperature
 def _30B3(edt):
@@ -146,11 +205,11 @@ class HomeAirConditioner(EchoNetNode):
     :param netif: IP address of node
     """
     def __init__(self, netif, instance = 0x1):
-        EchoNetNode.__init__(self, instance, netif)
         self.eojgc = 0x01
         self.eojcc = 0x30
+        EchoNetNode.__init__(self, self.eojgc, self.eojcc, instance, netif)
+
         # self.available_functions = EPC_CODE[self.eojgc][self.eojcc]['functions']
-        # self.propertyMaps = getAllPropertyMaps(self.netif, self.eojgc, self.eojcc , self.instance)
 
     """
     update is used as a quick and dirty way of producing a dict useful for API polling etc
@@ -169,7 +228,6 @@ class HomeAirConditioner(EchoNetNode):
                       0xBB, # room temperature
                       0xB0, # mode
                       0xBE] # outdoor temperature
-                      #0x8A] # manufactorers code
         opc = []
         returned_json_data = {}
         self.last_transaction_id += 1
@@ -180,7 +238,7 @@ class HomeAirConditioner(EchoNetNode):
         if raw_data is not False:
              for data in raw_data:
                 if data['rx_epc'] == 0x80: #Op status
-                    print(data['rx_edt'])
+                    returned_json_data.update(_FF80(data['rx_edt']))
                 elif data['rx_epc'] == 0xB3: #Set Temperature
                     returned_json_data.update(_30B3(data['rx_edt']))
                 elif data['rx_epc'] == 0xA0: #fan speed
@@ -211,10 +269,7 @@ class HomeAirConditioner(EchoNetNode):
     param temperature: A string representing the desired temperature.
     """
     def setOperationalTemperature(self, temperature):
-        if self.setMessage(0xB3, int(temperature)):
-            return True
-        else:
-            return False
+        return self.setMessage(0xB3, int(temperature))
 
     """
     GetMode returns the current configured mode (e.g Heating, Cooling, Fan etc)

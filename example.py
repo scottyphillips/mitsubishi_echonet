@@ -7,6 +7,9 @@ import time
 instances = mit.discover("192.168.1.6")
 print(instances)
 aircon = mit.HomeAirConditioner("192.168.1.6")
+print(aircon.eojgc)
+print(aircon.eojcc)
+print(aircon.getAllPropertyMaps())
 #for aircon in aircons:
 # print("Airconditioner {} available Get properties:".format(aircon.netif))
    #print(aircon.netif)
@@ -24,6 +27,5 @@ aircon = mit.HomeAirConditioner("192.168.1.6")
    # aircon.setFanSpeed('medium-low')
 
 #   print("Getting outdoor temperature")
-print(aircon.getFanSpeed())
-print(aircon.getMode())
+# aircon.setOperationalTemperature(21)
 print(aircon.update())

@@ -1,27 +1,51 @@
-from ..eojx import *
+# from ..eojx import *
 from ..epc  import *
-from ..esv  import *
 from ..functions import *
+
 """
-Superclass for Echonet node objects.
+Superclass for Echonet instance objects.
 """
+
+# Check status of Echonnet Instance
+def _FF80(edt):
+    ops_value = int.from_bytes(edt, 'big')
+    return {'status': ('On' if ops_value == 0x30 else 'Off')}
+
+def _009X(edt):
+    payload = []
+    if len(edt) < 17:
+        for i in range (1, len(edt)):
+            payload.append(edt[i])
+        return payload
+
+    for i in range (1, len(edt)):
+        code = i-1
+        binary = '{0:08b}'.format(edt[i])[::-1]
+        for j in range (0, 8):
+            if binary[j] == "1":
+                EPC = (j+8) * 0x10 + code
+                payload.append(EPC)
+    return payload
+
 class EchoNetNode:
 
     """
     Construct a new 'EchoNet' object.
 
+    :param eojgc
+    :param eojcc
     :param instance: Instance ID
     :param netif: IP address of node
     """
-    def __init__(self, instance = 0x1, netif="", polling = 10 ):
+    def __init__(self, eojgc, eojcc, instance = 0x1, netif="", polling = 10 ):
         self.netif = netif
         self.last_transaction_id = 0x1
-        self.eojgc = None
-        self.eojcc = None
+        self.eojgc = eojgc
+        self.eojcc = eojcc
         self.instance = instance
         self.available_functions = None
         self.status = False
-        self.propertyMaps = {}
+        self.propertyMaps = self.getAllPropertyMaps()
 
     """
     getMessage is used to fire ECHONET request messages to get Node information
@@ -30,7 +54,6 @@ class EchoNetNode:
     :param tx_epc: EPC byte code for the request.
     :return: the deconstructed payload for the response
 
-    TO DO - refactor getOpCode to no longer use lookup table
     """
     def getMessage(self, epc, pdc = 0x00):
         self.last_transaction_id += 1
@@ -45,7 +68,7 @@ class EchoNetNode:
 
     :param tx_epc: EPC byte code for the request.
     :param tx_edt: EDT data relevant to the request.
-    :return: the deconstructed payload for the response
+    :return: True if sucessful, false if request message failed
     """
     def setMessage(self, tx_epc, tx_edt):
         self.last_transaction_id += 1
@@ -78,7 +101,9 @@ class EchoNetNode:
     :return: status as a string.
     """
     def getOperationalStatus(self): # EPC 0x80
-        return self.getMessage(0x80)
+        raw_data = self.getMessage(0x80)[0]
+        if raw_data['rx_epc'] == 0x80:
+            return _FF80(raw_data['rx_edt'])
 
 
     """
@@ -103,14 +128,28 @@ class EchoNetNode:
     def off (self): # EPC 0x80
         return self.setMessage(0x80, 0x31)
 
-    def fetchSetProperties (self): # EPC 0x80
-        if 'setProperties' in self.propertyMaps:
-            return self.propertyMaps['setProperties']
+    def fetchSetProperties (self): # EPC 0x9E
+        if 0x9E in self.propertyMaps:
+            return self.propertyMaps[0x9E]
         else:
             return {}
 
-    def fetchGetProperties (self): # EPC 0x80
-        if 'getProperties' in self.propertyMaps:
-            return self.propertyMaps['getProperties']
+    def fetchGetProperties (self): # EPC 0x9F
+        if 0x9F in self.propertyMaps:
+            return self.propertyMaps[0x9F]
         else:
             return {}
+
+    def getAllPropertyMaps(self):
+        propertyMaps = {}
+        property_map = getOpCode(self.netif, self.eojgc, self.eojcc, self.instance, [{'EPC':0x9F},{'EPC':0x9E}])
+        for property in property_map:
+            propertyMaps[property['rx_epc']] = {}
+            for value in _009X(property['rx_edt']):
+                    if value in EPC_CODE[self.eojgc][self.eojcc]:
+                        propertyMaps[property['rx_epc']][EPC_CODE[self.eojgc][self.eojcc][value]] = value
+                    elif value in EPC_SUPER:
+                        propertyMaps[property['rx_epc']][EPC_SUPER[value][0]] = value
+                    else:
+                        print("code not found: " + hex(value) )
+        return propertyMaps

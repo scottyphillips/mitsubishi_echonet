@@ -18,27 +18,6 @@ GET_SNA = 		0x52
 INF_SNA = 		0x53
 SETGET_SNA =	0x5E
 
-MODES = {
-	'auto':  	0x41,
-	'cool':  	0x42,
-	'heat':  	0x43,
-	'dry':  	0x44,
-	'fan_only':	0x45,
-	'other': 	0x40
-}
-
-FAN_SPEED = {
-	'auto':	        0x41,
-	'minimum':  	0x31,
-	'low':  		0x32,
-	'medium-low': 	0x33,
-	'medium':		0x34,
-	'medium-high': 	0x35,
-	'high':			0x36,
-	'very-high':    0x37,
-	'max':			0x38
-}
-
 ESV_CODES = {
 	0x60: {'name': 'GetC', 'description': 'Property value write request (no response required)'},
 	0x61: {'name': 'SetC', 'description': 'Property value write request (response required)'},
