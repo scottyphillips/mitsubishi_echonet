@@ -155,16 +155,26 @@ class EchoNetNode:
         else:
             return {}
 
+    """
+    getIdentificationNumber returns a number used to identify an object uniquely
+
+    :return: Identification number as a string.
+    """
+    def getIdentificationNumber(self): # EPC 0x83
+        raw_data = self.getMessage(0x83)[0]
+        if raw_data['rx_epc'] == 0x83:
+            return _XXXX(raw_data['rx_edt'])
+
     def getAllPropertyMaps(self):
         propertyMaps = {}
         property_map = getOpCode(self.netif, self.eojgc, self.eojcc, self.instance, [{'EPC':0x9F},{'EPC':0x9E}])
         for property in property_map:
             propertyMaps[property['rx_epc']] = {}
             for value in _009X(property['rx_edt']):
-                    if value in EPC_CODE[self.eojgc][self.eojcc]:
-                        propertyMaps[property['rx_epc']][EPC_CODE[self.eojgc][self.eojcc][value]] = value
-                    elif value in EPC_SUPER:
-                        propertyMaps[property['rx_epc']][EPC_SUPER[value]] = value
-                    else:
-                        print("code not found: " + hex(value) )
+                if value in EPC_CODE[self.eojgc][self.eojcc]:
+                    propertyMaps[property['rx_epc']][EPC_CODE[self.eojgc][self.eojcc][value]] = value
+                elif value in EPC_SUPER:
+                    propertyMaps[property['rx_epc']][EPC_SUPER[value]] = value
+                else:
+                    print("code not found: " + hex(value) )
         return propertyMaps
