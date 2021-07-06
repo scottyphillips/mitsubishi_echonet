@@ -1,4 +1,4 @@
-# Mitsubishi Echonet
+# Pychonet
 
 [![GitHub Release][releases-shield]][releases]
 [![License][license-shield]](LICENSE)
@@ -6,12 +6,18 @@
 [![BuyMeCoffee][buymecoffeebadge]][buymecoffee]
 
 
-A library for interfacing with Mitsubishi HVAC with the ECHONET-lite protocol
-over WiFi adaptors such as the MAC-568IF-E.
+A library for interfacing with the ECHONETlite protocol as commonly used in Japan.
+Useful for interfacing to many interesting devices such as HVACs,
+electric car chargers and solar systems that support ECHONETLite
+
 
 It is specifically designed for use with Home Assistant, and its functionality
-is limited to HVAC systems, but it could be potentially extended for other
-ECHONET-lite applications and become a more general purpose library.
+is currently limited to HVAC systems, but it could be potentially extended for other
+ECHONETlite applications and become a more general purpose library.
+
+The basic boilerplate EchoNetInstance can be used to provide raw connectivity to
+any compatable device but it is up to the developer to create useful classes.
+Any additions to the lirbary are welcome.
 
 Similar implementations seem to be Node JS middleware running on Docker
 containers to interface into the MQTT API however this is designed to be used

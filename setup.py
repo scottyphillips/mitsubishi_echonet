@@ -7,18 +7,14 @@ with open(path.join(this_directory, 'README.md')) as f:
     long_description = f.read()
 
 setup(
-    name='mitsubishi_echonet',
-    version='0.3',
+    name='pychonet',
+    version='1.0',
     author='Scott Phillips',
     author_email='jrh@example.com',
-    packages=['mitsubishi_echonet'],
+    packages=['pychonet'],
     url='http://pypi.python.org/pypi/mitsubishi_echonet/',
     license='LICENSE.txt',
-    description='A library for interfacing with Mitsubishi HVAC via the Echonet lite protocol.',
+    description='A library for interfacing via the Echonet lite protocol.',
     long_description=long_description,
-    long_description_content_type='text/markdown',
-    # install_requires=[
-    #    "Django >= 1.1.1",
-    #    "caldav == 0.1.4",
-    #],
+    long_description_content_type='text/markdown'
 )

@@ -6,7 +6,7 @@ from ..eojx import *
 from ..epc  import *
 from ..esv  import *
 # from ..functions  import Function as F
-from .EchoNetNode import EchoNetNode
+from .EchonetInstance import EchonetInstance
 from ..functions import *
 
 """Class for Electric Vehicle Charger Objects"""

@@ -50,7 +50,7 @@ def _0083(edt):
 
 
 
-class EchoNetNode:
+class EchonetInstance:
 
     """
     Constructs an object to represent an Echonet lite instance .

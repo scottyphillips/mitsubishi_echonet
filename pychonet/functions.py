@@ -269,5 +269,5 @@ def getOpCode(ip_address, deojgc, deojcc, deojci, opc, tid=0x01):
                 edt['rx_epc'] = value['EPC']
                 return_data.append(edt)
 
-        print(return_data)
+        # print(return_data)
         return return_data

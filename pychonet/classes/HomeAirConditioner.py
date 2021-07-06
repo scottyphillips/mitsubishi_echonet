@@ -1,4 +1,4 @@
-from .EchoNetNode import _FF80, EchoNetNode
+from .EchonetInstance import _FF80, EchonetInstance
 from ..functions import getOpCode
 
 MODES = {
@@ -195,7 +195,7 @@ def _30A5(edt):
     return {'airflow_horiz': values.get(op_mode, "Invalid setting")}
 
 """Class for Home AirConditioner Objects"""
-class HomeAirConditioner(EchoNetNode):
+class HomeAirConditioner(EchonetInstance):
 
     """
     Construct a new 'HomeAirConditioner' object.
@@ -207,7 +207,7 @@ class HomeAirConditioner(EchoNetNode):
     def __init__(self, netif, instance = 0x1):
         self.eojgc = 0x01
         self.eojcc = 0x30
-        EchoNetNode.__init__(self, self.eojgc, self.eojcc, instance, netif)
+        EchonetInstance.__init__(self, self.eojgc, self.eojcc, instance, netif)
 
         # self.available_functions = EPC_CODE[self.eojgc][self.eojcc]['functions']
 

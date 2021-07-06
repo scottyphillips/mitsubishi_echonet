@@ -12,7 +12,7 @@ import socket
 import struct
 from .eojx import EOJX_GROUP, EOJX_CLASS
 from .functions  import buildEchonetMsg, sendMessage, decodeEchonetMsg
-from .classes.EchoNetNode import EchoNetNode
+from .classes.EchonetInstance import EchonetInstance
 from .classes.HomeAirConditioner import HomeAirConditioner
 
 """

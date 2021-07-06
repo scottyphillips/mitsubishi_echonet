@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
-import mitsubishi_echonet as mit
+import pychonet as echonet
 import time
 
 # Discover Echonet instances
-instances = mit.discover()
+instances = echonet.discover()
 print(instances)
 
 # create a HVAC instance object
-aircon = mit.HomeAirConditioner("192.168.1.6")
+aircon = echonet.HomeAirConditioner("192.168.1.6")
 
 # return all the property maps for the HVAC instance
 print(aircon.getAllPropertyMaps())
