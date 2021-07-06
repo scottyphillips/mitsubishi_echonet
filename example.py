@@ -8,9 +8,9 @@ instances = mit.discover("192.168.1.6")
 print(instances)
 aircon = mit.HomeAirConditioner("192.168.1.6")
 #for aircon in aircons:
-print("Airconditioner {} available Get properties:".format(aircon.netif))
+# print("Airconditioner {} available Get properties:".format(aircon.netif))
    #print(aircon.netif)
-print(aircon.fetchGetProperties())
+# print(aircon.fetchGetProperties())
 #
 #   print("Airconditioner {} available Set
 #properties:".format(aircon.netif))
@@ -25,4 +25,5 @@ print(aircon.fetchGetProperties())
 
 #   print("Getting outdoor temperature")
 print(aircon.getFanSpeed())
+print(aircon.getMode())
 print(aircon.update())
