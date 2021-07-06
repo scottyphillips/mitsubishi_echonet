@@ -8,38 +8,38 @@
 
 A library for interfacing with the ECHONETlite protocol as commonly used in Japan.
 Useful for interfacing to many interesting devices such as HVACs,
-electric car chargers and solar systems that support ECHONETLite
-
+electric car chargers and solar systems that support ECHONETLite.
 
 It is specifically designed for use with Home Assistant, and its functionality
-is currently limited to HVAC systems, but it could be potentially extended for other
-ECHONETlite applications and become a more general purpose library.
+is currently limited to HVAC systems, but it can easily be extended to other
+ECHONETlite applications and be used as a general purpose library.
 
 The basic boilerplate EchoNetInstance can be used to provide raw connectivity to
-any compatable device but it is up to the developer to create useful classes.
-Any additions to the lirbary are welcome.
+any compatible device but it is up to the developer to create useful classes.
+Any additions to the library are welcome.
 
-Similar implementations seem to be Node JS middleware running on Docker
-containers to interface into the MQTT API however this is designed to be used
-as a straight up library, no middleware, Node JS or Docker containers needed!
-
-It is designed to work with Python 3.7 out of the box as
-that was the environment I was working on.
+It is designed to work with Python 3.9.5+
 
 ## Instructions
 
 Simplest way to install is to use pip:
 
 ```
-pip install mitsubishi_echonet
+pip install pychonet
 ```
 
 ## Basic usage
-### Discover a list of HVAC using:
+### Discover a list of ECHONETlite instances using:
 ```python
-aircons = mit.discover('Home air conditioner')
-aircon = aircons[0]
+import pychonet as echonet
+echonet_instances = echonet.discover()
+print(echonet_instances)
+[{'netaddr': '192.168.1.6', 'eojgc': 1, 'eojcc': 48, 'eojci': 1, 'group': 'Air conditioner-related device group', 'code': 'Home air conditioner'}]
 ```
+
+### Create a HVAC ECHONETlite instance
+```python
+aircon = echonet.HomeAirConditioner("192.168.1.6")
 
 ### Turn HVAC on or off:
 ```python
@@ -84,11 +84,7 @@ aircon.update()
 NOTE: For Home Assistant users there is now a dedicated repo for the related Home Assistant 'Mitsubishi' custom component that makes use of this Python library:
 (https://github.com/scottyphillips/mitsubishi_hass)
 
-The custom component examples in the /bin directory will be removed from this
-repo at a later release and this repo will focus solely on the Python library.
-
-'example.py' in the /bin directory gives you an idea how to drive the
-HVAC directly from Python using this library.
+'example_hvac.py' gives you an idea how to drive a HVAC directly from Python using this library.
 
 ## Thanks
 
@@ -108,10 +104,10 @@ the basis of my reverse engineering efforts.
 This application is licensed under an MIT license, refer to LICENSE for details.
 
 ***
-[mitsubishi_echonet]: https://github.com/scottyphillips/mitsubishi_echonet
-[releases-shield]: https://img.shields.io/github/release/scottyphillips/mitsubishi_echonet.svg?style=for-the-badge
-[releases]: https://github.com/scottyphillips/mitsubishi_echonet/releases
-[license-shield]:https://img.shields.io/github/license/scottyphillips/mitsubishi_echonet?style=for-the-badge
+[pychonet]: https://github.com/scottyphillips/pychonet
+[releases-shield]: https://img.shields.io/github/release/scottyphillips/pychonet.svg?style=for-the-badge
+[releases]: https://github.com/scottyphillips/pychonet/releases
+[license-shield]:https://img.shields.io/github/license/scottyphillips/pychonet?style=for-the-badge
 [buymecoffee]: https://www.buymeacoffee.com/RgKWqyt?style=for-the-badge
 [buymecoffeebadge]: https://img.shields.io/badge/buy%20me%20a%20coffee-donate-yellow.svg?style=for-the-badge
 [maintenance-shield]: https://img.shields.io/badge/Maintainer-Scott%20Phillips-blue?style=for-the-badge
